@@ -1,0 +1,8 @@
+{
+    "apiKey": "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",
+    "url": "https://api.openai.com/v1/chat/completions",
+    "AWS_REGION": "ap-east-1",
+    "AWS_ACCESS_KEY_ID": "AKIA5FTZA6WMRRDIQ76A",
+    "AWS_SECRET_ACCESS_KEY": "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"
+
+}

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>分析報告管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .report-search {
+            height: 3.5vw;
+            right: 10%;
+            margin-top: -3.5vw;
+            position: absolute;
+            font-size: 1.5vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: black;
+        }
+
+        .additional-block1 {
+            display: flex;
+            /* align-items: center;  */
+            position: absolute;
+            left: 10%;
+            /* transform: translateX(-50%); */
+            transition: transform 0.3s ease-in-out;
+            box-sizing: border-box;
+            background: #e4e3e3;
+            border-radius: 15pt;
+            box-shadow: 0px 8px 8px 0px rgba(0, 0, 0, 0.15);
+            width: 80%;
+            height: 60%;
+            margin-top: 2em;
+            /* 超出介面可以下滑 */
+            overflow-y: scroll;
+        }
+
+        emotion-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .emotion-bar {
+            height: 20px;
+            /* background: #4CAF50; */
+            color: grey;
+            text-align: left;
+            line-height: 20px;
+            padding: 0 5px;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+
+        .emotion-name {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            /* 給予容器適當的寬度 */
+            height: 100vh;
+            /* 這會使容器的高度等於視口的高度 */
+            overflow-y: auto;
+            /* 若內容高度超過當前視口高度，將會允許垂直滾動 */
+        }
+
+        .download_button {
+            padding: 10px 20px;
+            /* Add some padding around the text */
+            background-color: #2b8b31;
+            /* A nice green background */
+            color: white;
+            /* White text color */
+            border: none;
+            /* No border */
+            cursor: pointer;
+            /* Cursor to signify the element is clickable */
+            font-size: 16px;
+            /* A reasonable font size */
+            border-radius: 5px;
+            /* Rounded corners for a softer look */
+            text-decoration: none;
+            /* No underline */
+            margin: 10px;
+            /* Some space around the button */
+            transition: background-color 0.3s ease;
+            /* Smooth background color transition on hover */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .download_button:hover {
+            background-color: #c0dbc1;
+            /* Darken button color when hovered for visual feedback */
+        }
+
+        /* 分析報告的三個框框 */
+        .content-block {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 1vw;
+            padding: 1vw;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            max-width: 80vw;
+
+            border: 1px solid #ccc;
+            text-align: center;
+            /* 新增的居中属性 */
+        }
+
+        /* 以下是新加的彈出式視窗 */
+        .wrap {
+            text-align: center;
+            padding: 5%;
+        }
+
+        /* 新加的彈出式視窗button */
+        .btn {
+            background-color: #FFB80C;
+            text-decoration: none;
+            color: #1e1e1e;
+            padding: 16px;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #e6d2a6;
+            color: #1e1e1e;
+        }
+
+        .popup-wrap {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            content: '';
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        .popup-box {
+            font-size: 1.5vw;
+            width: 65%;
+            padding: 50px 75px;
+            transform: translate(-50%, -50%) scale(0.5);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            background: #fff;
+            text-align: center;
+            overflow: auto;
+            max-height: 80%;
+        }
+
+        .close-btn {
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border-radius: 100%;
+            background: #d75f70;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            line-height: 40px;
+            font-size: 32px;
+        }
+
+        .transform-in,
+        .transform-out {
+            display: block;
+            -webkit-transition: all ease 0.5s;
+            transition: all ease 0.5s;
+        }
+
+        .transform-in {
+            -webkit-transform: translate(-50%, -50%) scale(1);
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .transform-out {
+            -webkit-transform: translate(-50%, -50%) scale(0.5);
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        th {
+            display: table-cell;
+            vertical-align: inherit;
+            font-weight: bold;
+            text-align: -internal-center;
+            unicode-bidi: isolate;
+            background-color: #FFF;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Navigation_bar">
+        <img src="/static/image/logo.png" class="logo" />
+        <div class="button-container">
+            <a class="link_button" id="userBtn" href="/user">使用者管理</a>
+            <a class="link_button" id="questionBtn" href="/question">題目管理</a>
+            <a class="link_button" id="reportBtn" href="/report">分析報告管理</a>
+            <a class="link_button" id="pointBtn" href="/point">點數管理</a>
+            <a class="link_button" id="problemBtn" href="/problem">問題回報管理</a>
+        </div>
+    </div>
+    <div class="div-user">分析報告管理</div>
+    
+    <div class="report-search">
+        <form method="POST">
+            使用者名稱: <input type="text" name="user_name" />
+            <input type="submit" value="查詢" />
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                <div class=flash>{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </form>
+    </div>
+    
+    <div class="additional-block1">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>使用者編號</th>
+                    <th>使用者名字</th>
+                    <th>分析報告編號</th>
+                    <th>日期</th>
+                    <th>面試紀錄</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in items %}
+                <tr id="row-{{ item['使用者編號'] }}-{{ item['分析報告編號'] }}">
+                    <td>{{ item['使用者編號'] }}</td>
+                    <td>{{ user_names[item['使用者編號']]|default('N/A') }}</td>
+                    <td>{{ item['分析報告編號'] }}</td>
+                    <td>{{ item['日期'] }}</td>
+                    <td>
+                        <div class="wrap">
+                            <a class="btn popup-btn"
+                                href="#letmeopen-{{ item['使用者編號'] }}-{{ item['分析報告編號'] }}">顯示詳細資料</a>
+                        </div>
+
+                        <div class="popup-wrap" id="letmeopen-{{ item['使用者編號'] }}-{{ item['分析報告編號'] }}">
+                            <div class="popup-box transform-out" id="additional-block1">
+                                <!-- <h2>{{ user_names[item['使用者編號']]|default('N/A') }}</h2><br> -->
+                                <h2>分析報告編號：{{ item['分析報告編號'] }}</h2>
+                                <h2>面試練習日期：{{ item['日期'] }}</h2><br>
+                                <div class="content-block" id="hr-section">
+                                    <strong>人資題</strong>
+                                </div>
+                                <details>
+                                    {% for record in item['人資題紀錄'] %}
+                                    <p><strong>題目：</strong> {{ record['hr_question'] }}</p>
+                                    <p><strong>我的回答：</strong> {{ record['transcript'] }}</p>
+                                    <p><strong>我的情緒分數：</strong></p>
+                                    <table>
+                                        <tr>
+                                            <th>情緒</th>
+                                            <th>分數</th>
+                                        </tr>
+                                        {% for emotion, score in record['scores'].items() %}
+                                        {% set percent_score = (score * 100) | round(2) %}
+                                        <tr>
+                                            <td class="emotion-name" data-emotion="{{ emotion }}"></td>
+                                            <td>
+                                                <div class="bar-container">
+                                                    <div class="bar" data-percentage="{{ percent_score }}"
+                                                        style="width: {{ percent_score }}%;">
+                                                        <span class="percentage">{{ percent_score }}%</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="evaluation"></td> <!-- 評級顯示在這裡 -->
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                    <details>
+                                        <p><strong>面試導師回覆：</strong> {{ record['gpt_reply'] }}</p>
+                                    </details>
+                                    {% endfor %}
+                                </details>
+                                <div class="content-block">
+                                    <strong>技術題：</strong>
+                                </div>
+
+                                <details>
+                                    {% for record in item['技術題紀錄'] %}
+                                    <p><strong>題目：</strong> {{ record['question'] }}</p>
+                                    <p><strong>我的程式碼：</strong> {{ record['code'] }}</p>
+                                    <p><strong>面試導師回覆：</strong> {{ record['reply'] }}</p>
+
+                                    {% endfor %}
+                                </details>
+                                </p>
+                                <div class="content-block">
+                                    <strong>概念題：</strong>
+                                </div>
+                                <details>
+                                    {% for record in item['概念題紀錄'] %}
+                                    <p><strong>題目：</strong> {{ record['question'] }}</p>
+                                    <p><strong>我的回答：</strong> {{ record['user_reply'] }}</p>
+                                    <p><strong>面試導師回覆：</strong> {{ record['AI_reply'] }}</p>
+                                    {% endfor %}
+                                </details>
+                                </p>
+                                <a class="close-btn popup-close" href="#">x</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form action="/delete_report" method="post" 　>
+                            <input type="hidden" name="使用者編號" value="{{ item['使用者編號'] }}">
+                            <input type="hidden" name="分析報告編號" value="{{ item['分析報告編號'] | int }}">
+                            <button type="submit" class="f-btn deleteButton">刪除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var deleteButtons = document.querySelectorAll('.deleteButton');
+
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                var confirmation = confirm('您確定要刪除嗎？');
+
+                if (confirmation) {
+                    // 如果確認刪除，則提交表單
+                    var form = button.closest('form');
+                    form.submit();
+                } else {
+                    // 如果取消刪除，不做任何操作
+                    return false;
+                }
+            });
+        });
+    });
+
+    // 轉換情緒名稱到中文
+    function translateEmotionName(emotion) {
+        const emotions = {
+            "Anger": "憤怒",
+            "Pain": "痛苦",
+            "Amusement": "開心",
+            "Anxiety": "焦慮",
+            "Boredom": "無聊",
+            "Calmness": "平靜",
+            "Embarrassment": "尷尬",
+            "Fear": "恐懼",
+            "Satisfaction": "滿意"
+        };
+        return emotions[emotion] || emotion; // 如果找不到對應的中文將顯示原英文情緒名
+    }
+
+    // 設置評級文本
+    function getEvaluationText(score, isReverseLogic) {
+        let evaluation = "";
+        if (!isReverseLogic) {
+            if (score < 20) {
+                evaluation = '非常差';
+            } else if (score < 40) {
+                evaluation = '差';
+            } else if (score < 60) {
+                evaluation = '普通';
+            } else if (score < 80) {
+                evaluation = '好';
+            } else {
+                evaluation = '非常好';
+            }
+        } else { // reverse logic for specified emotions
+            if (score < 20) {
+                evaluation = '非常好';
+            } else if (score < 40) {
+                evaluation = '好';
+            } else if (score < 60) {
+                evaluation = '普通';
+            } else if (score < 80) {
+                evaluation = '差';
+            } else {
+                evaluation = '非常差';
+            }
+        }
+        return evaluation;
+    }
+    window.onload = function () {
+        // 更新情緒名稱為中文
+        const emotionNames = document.querySelectorAll('.emotion-name');
+        emotionNames.forEach(elem => {
+            const emotion = elem.dataset.emotion;
+            elem.textContent = translateEmotionName(emotion);
+        });
+
+        // 更新評級文本
+        document.querySelectorAll('tr').forEach(row => {
+            const percentageElem = row.querySelector('.bar');
+            const emotionElem = row.querySelector('.emotion-name');
+            const emotion = emotionElem ? emotionElem.dataset.emotion : '';
+            const reverseLogicEmotions = ['Anger', 'Pain', 'Anxiety', 'Boredom', 'Embarrassment', 'Fear'];
+            const isReverseLogic = reverseLogicEmotions.includes(emotion);
+
+            if (percentageElem) {
+                const percentage = parseFloat(percentageElem.dataset.percentage);
+                const evaluationElem = row.querySelector('.evaluation');
+                evaluationElem.textContent = getEvaluationText(percentage, isReverseLogic);
+            }
+        });
+
+        // Update color of the bar based on score and specific emotions
+        document.querySelectorAll('.bar').forEach(bar => {
+            const percentage = parseFloat(bar.dataset.percentage);
+            // Getting the emotion directly from the closest '.emotion-name' element
+            const emotionElem = bar.closest('tr').querySelector('.emotion-name');
+            const emotion = emotionElem ? emotionElem.dataset.emotion : '';
+
+            // Define emotions that require reverse logic
+            const reverseLogicEmotions = ['Anger', 'Pain', 'Anxiety', 'Boredom', 'Embarrassment', 'Fear'];
+
+            // Check if the current emotion requires reverse logic
+            if (reverseLogicEmotions.includes(emotion)) {
+                // Apply reverse logic for specific emotions
+                if (percentage > 70) {
+                    bar.style.backgroundColor = 'red';
+                } else if (percentage > 30) {
+                    bar.style.backgroundColor = 'yellow';
+                } else {
+                    bar.style.backgroundColor = 'green';
+                }
+            } else {
+                // Normal logic for other emotions
+                if (percentage < 30) {
+                    bar.style.backgroundColor = 'red';
+                } else if (percentage < 70) {
+                    bar.style.backgroundColor = 'yellow';
+                } else {
+                    bar.style.backgroundColor = 'green';
+                }
+            }
+        });
+    };
+
+    $(".popup-btn").click(function (e) {
+        e.stopPropagation();
+        var href = $(this).attr("href");
+        $(href).fadeIn(250);
+        $(href).find(".popup-box").removeClass("transform-out").addClass("transform-in");
+    });
+
+    $(document).click(function (e) {
+        if (!$(e.target).closest('.popup-box').length && !$(e.target).is('.popup-btn')) {
+            closeWindow();
+        }
+    });
+
+    $(".popup-close").click(function (e) {
+        e.stopPropagation();
+        closeWindow();
+    });
+
+    function closeWindow() {
+        $(".popup-wrap").fadeOut(200);
+        $(".popup-box").removeClass("transform-in").addClass("transform-out");
+    }
+
+</script>
+
+</html>

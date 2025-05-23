@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <title>管理系統登入</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .manager {
+      position: absolute;
+      top: 9vw;
+      left: 38vw;
+      /* 使用相對位置 */
+      width: 23vw;
+      /* 使用相對寬度 */
+      height: 15vw;
+      /* 使用相對高度 */
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      left: 39vw;
+      /* 距離左邊 */
+      top: 26vw;
+      /* 距離上方 */
+      transition: transform 0.3s ease-in-out;
+      /* 添加移動效果 */
+      font-weight: bold;
+      /* 設定為粗體 */
+      font-size: 2vw;
+      border-radius: 1.5vw;
+      color: #dbd7ce;
+      background: #364966;
+      /* 背景顏色 */
+      padding: 0.7vw;
+      /* 增加內間距 */
+    }
+
+    .text-account {
+      position: absolute;
+      left: 47vw;
+      /* 距離左邊，可以根據需要調整位置 */
+      top: 27vw;
+      /* 距離上方，與.type 一致 */
+      width: 13vw;
+      /* 設定寬度為 */
+      height: 1.1vw;
+      /* 設定高度 */
+      border-radius: 1.5vw;
+      background: #dbd7ce;
+      font-weight: bold;
+      font-size: 1.5vw;
+      /* 調整字體大小 */
+      padding: 1vw;
+      /* 增加內間距 */
+      resize: none;
+      /* 禁用大小調整 */
+      overflow: hidden;
+      /* 隱藏溢出的內容 */
+      border: 3px solid #364966;
+      /* 添加邊框效果 */
+    }
+
+    .password {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      left: 39vw;
+      /* 距離左邊 */
+      top: 32.4vw;
+      /* 距離上方 */
+      transition: transform 0.3s ease-in-out;
+      /* 添加移動效果 */
+      font-weight: bold;
+      /* 設定為粗體 */
+      font-size: 2vw;
+      border-radius: 1.5vw;
+      color: #dbd7ce;
+      background: #364966;
+      /* 背景顏色 */
+      padding: 0.7vw;
+      /* 增加內間距 */
+    }
+
+    .text-password {
+      position: absolute;
+      left: 47vw;
+      /* 距離左邊，可以根據需要調整位置 */
+      top: 33.4vw;
+      /* 距離上方，與.type 一致 */
+      width: 13vw;
+      /* 設定寬度為 */
+      height: 1.1vw;
+      /* 設定高度 */
+      border-radius: 1.5vw;
+      background: #dbd7ce;
+      font-weight: bold;
+      font-size: 1.5vw;
+      /* 調整字體大小 */
+      padding: 1vw;
+      /* 增加內間距 */
+      resize: none;
+      /* 禁用大小調整 */
+      overflow: hidden;
+      /* 隱藏溢出的內容 */
+      border: 3px solid #364966;
+      /* 添加邊框效果 */
+    }
+
+    .signIn-btn {
+      background-color: #CEC9C9;
+      border-radius: 3vw;
+      /* 使用相對圓角 */
+      width: 10vw;
+      /* 使用相對寬度 */
+      height: 3.5vw;
+      /* 使用相對高度 */
+      position: absolute;
+      top: 40vw;
+      /* 使用相對垂直位置 */
+      left: 50%;
+      /* 使用相對水平位置 */
+      transform: translate(-50%, -50%);
+      /* 使用相對置中 */
+      font-size: 2vw;
+      /* 使用相對字體大小 */
+      display: flex;
+      justify-content: center;
+      /* 使用相對內容置中 */
+      align-items: center;
+      /* 使用相對內容置中 */
+      border: 0.25vw solid rgb(104, 104, 104);
+      /* 使用相對邊框粗細 */
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="Navigation_bar">
+    <img src="/static/image/logo.png" class="logo" />
+    <img src="/static/image/manager.png" class="manager" />
+    <div class="button-container">
+      <a class="link_button" id="userBtn">使用者管理</a>
+      <a class="link_button" id="questionBtn">題目管理</a>
+      <a class="link_button" id="reportBtn">分析報告管理</a>
+      <a class="link_button" id="pointBtn">點數管理</a>
+      <a class="link_button" id="problemBtn">問題回報管理</a>
+    </div>
+  </div>
+  <div class="account-container">
+    <div class="account">帳號</div>
+    <textarea class="text-account" id="account" onkeydown="enter(event)"></textarea>
+  </div>
+  <div class="password-container">
+    <div class="password">密碼</div>
+    <input type="password" class="text-password" id="password" onkeydown="enter(event)"></input>
+  </div>
+  <button class="signIn-btn" id="signIn">登 入</button>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    const signIn = document.getElementById("signIn");
+    const linkButtons = document.querySelectorAll('.link_button');
+    let isAuthenticated = false;
+
+    signIn.addEventListener("click", async (event) => {
+      event.preventDefault(); // 阻止表單提交
+
+      const accountValue = document.getElementById('account').value;
+      const passwordValue = document.getElementById('password').value;
+
+      if (accountValue.trim() === '' || passwordValue.trim() === '') {
+        alert('帳號和密碼不能為空！');
+        return;
+      }
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ account: accountValue, password: passwordValue })
+        });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          if (responseData.success) {
+            isAuthenticated = true; 
+            window.location.href = "/user"; // 登入成功，導向 user.html
+          } else {
+            alert('帳號或密碼輸入錯誤');
+          }
+        } else {
+          throw new Error('Network response was not ok.');
+        }
+      } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+      }
+    });
+
+    // Enter 鍵觸發登入功能
+    document.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault(); 
+        signIn.click();
+      }
+    });
+
+    linkButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (!isAuthenticated) {
+          alert('請先登入！');
+        }
+      });
+    });
+  </script>
+
+
+</body>
+
+</html>

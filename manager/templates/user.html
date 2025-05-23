@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>使用者管理</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .additional-block1 {
+      display: block;
+      align-items: center;
+      position: relative;
+      left: 10%;
+      transition: transform 0.3s ease-in-out;
+      box-sizing: border-box;
+      background: #e4e3e3;
+      border-radius: 15pt;
+      box-shadow: 0px 8px 8px 0px rgba(0, 0, 0, 0.15);
+      width: 80%;
+      height: 29vw;
+      margin-top: 2em;
+      overflow: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="Navigation_bar">
+    <img src="/static/image/logo.png" class="logo" />
+    <div class="button-container">
+      <a class="link_button" id="userBtn" href="/user">使用者管理</a>
+      <a class="link_button" id="questionBtn" href="/question">題目管理</a>
+      <a class="link_button" id="reportBtn" href="/report">分析報告管理</a>
+      <a class="link_button" id="pointBtn" href="/point">點數管理</a>
+      <a class="link_button" id="problemBtn" href="/problem">問題回報管理</a>
+    </div>
+  </div>
+
+  <div class="div-user">使用者管理</div>
+
+  <div class="additional-block1">
+    <table class="fixed-header">
+      <thead>
+        <tr>
+          <th>使用者編號</th>
+          <th>使用者名稱</th>
+          <th>電子郵件</th>
+          <th>密碼</th>
+          <th>電話號碼</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      {% for item in items %}
+      <tr>
+        <td>{{ item['使用者編號'] }}</td>
+        <td>{{ item['name'] }}</td>
+        <td>{{ item['mail'] }}</td>
+        <td>{{ item['password'] }}</td>
+        <td>{{ item['phone'] }}</td>
+        <td>
+          <button class="f-btn deleteButton" data-id="{{ item['使用者編號'] }}">刪除</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $(".deleteButton").click(function (e) {
+        e.preventDefault();
+        let user_id = $(this).data("id");
+
+        if (confirmDelete()) {
+          $.ajax({
+            url: "/delete_user/" + user_id,
+            type: "DELETE",
+            success: function (result) {
+              location.reload();
+            },
+          });
+        }
+      });
+    });
+
+    function confirmDelete() {
+      return confirm("您確定要刪除嗎？");
+    }
+
+  </script>
+</body>
+
+</html>
