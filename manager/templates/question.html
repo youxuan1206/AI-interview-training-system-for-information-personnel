@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>題目管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .button1,
+        .button1 * {
+            box-sizing: border-box;
+        }
+
+        .button1 {
+            background: #d4dbe0;
+            border-radius: 1vw;
+            width: 16vw;
+            height: 3.5vw;
+            right: 5%;
+            margin-top: -3.5vw;
+            position: absolute;
+            font-size: 2vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 0.2vw solid rgb(104, 104, 104);
+            text-decoration: none;
+            color: black;
+        }
+
+
+        .HRbox {
+            background: #e4e3e3;
+            border-radius: 15pt;
+            width: 65vw;
+            /* 使用相對寬度 */
+            height: 28vw;
+            /* 使用相對高度 */
+            position: absolute;
+            right: 5%;
+            margin-top: 2em;
+            /* 使用相對垂直位置 */
+            box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.15);
+            /* 使用相對陰影大小 */
+            overflow: auto;
+            visibility: visible;
+        }
+
+        .box1,
+        .box2 {
+            background: #e4e3e3;
+            border-radius: 15pt;
+            width: 65vw;
+            /* 使用相對寬度 */
+            height: 28vw;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 30vw;
+            /* 使用相對水平位置 */
+            margin-top: 2em;
+            /* 使用相對垂直位置 */
+            box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.15);
+            /* 使用相對陰影大小 */
+            visibility: hidden;
+            overflow: auto;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+        }
+
+        .collapsed-content {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 25px;
+            /* 初始高度 */
+            transition: max-height 0.3s ease;
+            /* 添加過渡效果 */
+        }
+
+        .expanded-content {
+            white-space: pre-line;
+        }
+
+
+        .expand-button button {
+            display: block;
+            float: right;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            padding: 0;
+            margin: 0;
+        }
+
+        /*人資題目表格調整*/
+        .HRbox th:nth-child(1),
+        .HRbox td:nth-child(1) {
+            width: 3vw;
+            padding: 8px 0 8px 8px;
+        }
+
+        .HRbox th:nth-child(2),
+        .HRbox td:nth-child(2) {
+            width: 6vw;
+            text-align: center;
+        }
+
+        .HRbox th:nth-child(3),
+        .HRbox td:nth-child(3) {
+            max-width: 120px;
+        }
+
+        .HRbox th:nth-child(4),
+        .HRbox td:nth-child(4) {
+            width: 8%;
+        }
+
+        /*概念題目表格調整*/
+        .box1 th:nth-child(1),
+        .box1 td:nth-child(1) {
+            width: 3vw;
+            padding: 8px 0 8px 8px;
+        }
+
+        .box1 th:nth-child(2),
+        .box1 td:nth-child(2) {
+            width: 6vw;
+            text-align: center;
+        }
+
+        .box1 th:nth-child(3),
+        .box1 td:nth-child(3) {
+            max-width: 160px;
+        }
+
+        .box1 th:nth-child(4),
+        .box1 td:nth-child(4) {
+            max-width: 30px;
+        }
+
+        .box1 th:nth-child(5),
+        .box1 td:nth-child(5) {
+            max-width: 25px;
+        }
+
+        .box1 th:nth-child(6),
+        .box1 td:nth-child(6) {
+            width: 8%;
+        }
+
+        .box1 th:nth-child(5) .expanded-content,
+        .box1 td:nth-child(5) .expanded-content {
+            max-width: 50px;
+            overflow-wrap: break-word; 
+        }
+
+        /*技術題目表格調整*/
+        .box2 th:nth-child(1),
+        .box2 td:nth-child(1) {
+            width: 3vw;
+            padding: 8px 0 8px 8px;
+        }
+
+        .box2 th:nth-child(2),
+        .box2 td:nth-child(2) {
+            width: 6vw;
+            text-align: center;
+        }
+
+        .box2 th:nth-child(3),
+        .box2 td:nth-child(3) {
+            max-width: 35px;
+            ;
+        }
+
+        .box2 th:nth-child(4),
+        .box2 td:nth-child(4) {
+            width: 10%;
+        }
+
+        .box2 th:nth-child(5),
+        .box2 td:nth-child(5) {
+            max-width: 180px;
+        }
+
+        .box2 th:nth-child(6),
+        .box2 td:nth-child(6) {
+            max-width: 35px;
+        }
+
+        .box2 th:nth-child(6) .expanded-content,
+        .box2 td:nth-child(6) .expanded-content {
+            max-width: 60px;
+            overflow-wrap: break-word; 
+        }
+
+        .box2 th:nth-child(7),
+        .box2 td:nth-child(7) {
+            width: 8%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Navigation_bar">
+        <img src="/static/image/logo.png" class="logo" />
+        <div class="button-container">
+            <a class="link_button" id="userBtn" href="/user">使用者管理</a>
+            <a class="link_button" id="questionBtn" href="/question">題目管理</a>
+            <a class="link_button" id="reportBtn" href="/report">分析報告管理</a>
+            <a class="link_button" id="pointBtn" href="/point">點數管理</a>
+            <a class="link_button" id="problemBtn" href="/problem">問題回報管理</a>
+        </div>
+    </div>
+
+    <div class="div-user">題目管理</div>
+    <div class="addquestion">
+        <a class="button1" href="/addexam" onclick="openSubPage(event)">新增題目</a>
+    </div>
+
+    <div class="rectangle">
+        <div class="hrquestion">
+            <button id="hrButton" class="box-button" onclick="showContent('HRbox', 'hrButton')">人資題目</button>
+        </div>
+        <div class="proquestion1">
+            <button id="conceptButton" class="box-button" onclick="showContent('box1', 'conceptButton')">概念題目</button>
+        </div>
+        <div class="proquestion2">
+            <button id="programmingButton" class="box-button"
+                onclick="showContent('box2', 'programmingButton')">程式題目</button>
+        </div>
+    </div>
+
+
+    <div class="HRbox">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>類型</th>
+                    <th>題目編號</th>
+                    <th>題目內容</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            {% for item in HR_questions %}
+            <tr>
+                <td>{{ item['關鍵字'] }}</td>
+                <td>{{ item['題目編號'] }}</td>
+                <td>
+                    {% if item['題目內容']|length > 48 %}
+                    <div class="content">
+                        <div class="collapsed-content">{{ item['題目內容']}}</div>
+                        <div class="expand-button">
+                            <button onclick="expandContent(this)">▽</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    {{ item['題目內容']}}
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="button-group">
+                        <button class="f-btn editButton">編輯</button>
+                        <button class="f-btn deleteButton" data-id="{{ item['題目編號'] }}"
+                            data-keyword="{{ item['關鍵字'] }}">刪除</button>
+                        <button class="f-btn saveButton" data-id="{{ item['題目編號'] }}" data-keyword="{{ item['關鍵字'] }}"
+                            style="display: none;">儲存</button>
+                        <button class="f-btn cancelButton" style="display: none;">取消</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="box1">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>類型</th>
+                    <th>題目編號</th>
+                    <th>題目內容</th>
+                    <th>職業關鍵字</th>
+                    <th>參考答案</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            {% for item in pro_questions %}
+            <tr>
+                <td>{{ item['關鍵字'] }}</td>
+                <td>{{ item['題目編號'] }}</td>
+                <td>{% if item['題目內容']|length > 42 %}
+                    <div class="content">
+                        <div class="collapsed-content">{{ item['題目內容']}}</div>
+                        <div class="expand-button">
+                            <button onclick="expandContent(this)">▽</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    {{ item['題目內容']}}
+                    {% endif %}
+                </td>
+                <td>{% if item['類別']|length > 1 %}
+                    <div class="content">
+                        <div class="collapsed-content">{{ item['類別'] }}</div>
+                        <div class="expand-button">
+                            <button onclick="expandContent(this)">▽</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    {{ item['類別'] }}
+                    {% endif %}
+                </td>
+                <td>{% if item['url']|length > 10 %}
+                    <div class="content">
+                        <div class="collapsed-content">{{ item['url'] }}</div>
+                        <div class="expand-button">
+                            <button onclick="expandContent(this)">▽</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    {{ item['url'] }}
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="button-group">
+                        <button class="f-btn editButton">編輯</button>
+                        <button class="f-btn deleteButton" data-id="{{ item['題目編號'] }}"
+                            data-keyword="{{ item['關鍵字'] }}">刪除</button>
+                        <button class="f-btn saveButton" data-id="{{ item['題目編號'] }}" data-keyword="{{ item['關鍵字'] }}"
+                            style="display: none;">儲存</button>
+                        <button class="f-btn cancelButton" style="display: none;">取消</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="box2">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>類型</th>
+                    <th>題目編號</th>
+                    <th>題目關鍵字</th>
+                    <th>難度</th>
+                    <th>題目內容</th>
+                    <th>職業關鍵字</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            {% for item in code_questions %}
+            <tr>
+                <td>{{ item['關鍵字'] }}</td>
+                <td>{{ item['題目編號'] }}</td>
+                <td>{% if item['tag']|length > 1 %}
+                    <div class="content">
+                        <div class="collapsed-content">{{ item['tag'] }}</div>
+                        <div class="expand-button">
+                            <button onclick="expandContent(this)">▽</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    {{ item['tag'] }}
+                    {% endif %}
+                </td>
+                <td>{{ item['難度'] }}</td>
+                <td>{% if item['題目內容']|length > 42 %}
+                    <div class="content">
+                        <div class="collapsed-content">{{ item['題目內容']}}</div>
+                        <div class="expand-button">
+                            <button onclick="expandContent(this)">▽</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    {{ item['題目內容']}}
+                    {% endif %}
+                </td>
+                <td>{% if item['類別']|length > 2 %}
+                    <div class="content">
+                        <div class="collapsed-content">{{ item['類別'] }}</div>
+                        <div class="expand-button">
+                            <button onclick="expandContent(this)">▽</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    {{ item['類別'] }}
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="button-group">
+                        <button class="f-btn editButton">編輯</button>
+                        <button class="f-btn deleteButton" data-id="{{ item['題目編號'] }}"
+                            data-keyword="{{ item['關鍵字'] }}">刪除</button>
+                        <button class="f-btn saveButton" data-id="{{ item['題目編號'] }}" data-keyword="{{ item['關鍵字'] }}"
+                            style="display: none;">儲存</button>
+                        <button class="f-btn cancelButton" style="display: none;">取消</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        var subPage;
+
+        function openSubPage(event) {
+            event.preventDefault(); // 阻止默認的超連結行為
+            var subPageUrl = event.target.getAttribute('href');
+            subPage = window.open(subPageUrl, '_blank', 'height=600,width=800'); // 在新的子分頁中打開連結
+
+            // 監聽當前分頁的關閉事件
+            window.addEventListener('beforeunload', closeSubPage);
+        }
+
+        function closeSubPage() {
+            if (subPage && !subPage.closed) {
+                subPage.close(); // 關閉子分頁
+            }
+        }
+
+        function expandContent(button) {
+            var content = button.parentElement.previousElementSibling;
+            if (content.classList.contains('collapsed-content')) {
+                content.classList.remove('collapsed-content');
+                content.classList.add('expanded-content');
+                button.innerText = '△';
+            } else {
+                content.classList.remove('expanded-content');
+                content.classList.add('collapsed-content');
+                button.innerText = '▽';
+            }
+        }
+
+
+
+        var isEditing = false; // 是否正在編輯
+        var originalContent = []; // 原始內容
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // 初始顯示內容
+            showContent('HRbox', 'hrButton'); // 顯示預設內容
+        });
+
+        function showContent(contentClass, buttonId) {
+            var targetContent = document.querySelector('.' + contentClass);
+            if (targetContent) {
+                // 顯示目標內容
+                targetContent.style.visibility = 'visible';
+                // 隱藏除目標內容之外的其他內容
+                var allContents = document.querySelectorAll('.HRbox, .box1, .box2');
+                allContents.forEach(function (content) {
+                    if (content !== targetContent) {
+                        content.style.visibility = 'hidden';
+                    }
+                });
+
+
+                // 移除所有按鈕的 active 類
+                var allButtons = document.querySelectorAll('.box-button');
+                allButtons.forEach(function (button) {
+                    button.classList.remove('active');
+                });
+
+                // 為當前按鈕添加 active 類
+                var activeButton = document.getElementById(buttonId);
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                }
+
+                // 附加事件監聽器
+                attachEventListeners(targetContent);
+            }
+        }
+
+        function attachEventListeners(content) {
+            var attributeMapping = {
+                'tag': 'tag',
+                '難度': '難度',
+                '題目內容': '題目內容',
+                '關鍵字': '類別'
+            };
+
+            // 編輯按鈕的點擊事件處理函數
+            $(content).find(".editButton").click(function (e) {
+                e.preventDefault();
+                if (isEditing) { // 如果正在編輯，取消編輯狀態
+                    cancelEdit();
+                }
+                isEditing = true;
+
+                var row = $(this).closest('tr');
+                originalContents = []; // 清空原始內容
+                row.find('td:nth-child(n+3):not(:last-child)').each(function () {
+                    originalContents.push($(this).html()); // 儲存原始內容
+                });
+                row.find('td:nth-child(n+3):not(:last-child)').attr('contenteditable', true); // 讓第三格到倒數第二格之間的內容可編輯
+                row.find('.editButton').hide(); // 隱藏編輯按鈕
+                row.find('.deleteButton').hide(); // 隱藏刪除按鈕
+                row.find('.saveButton').show(); // 顯示儲存按鈕
+                row.find('.cancelButton').show(); // 顯示取消按鈕
+
+                // 展开内容并隐藏摺疊按钮
+                var content = row.find('.collapsed-content');
+                if (content.length > 0) {
+                    content.removeClass('collapsed-content');
+                    content.addClass('expanded-content');
+                    content.siblings('.expand-button').children('button').hide();
+                }
+            });
+
+            // 刪除按鈕的點擊事件處理函數
+            $(content).find(".deleteButton").click(function (e) {
+                e.preventDefault();
+                let question_id = $(this).data("id");
+                let keyword = $(this).data("keyword");
+                var delete_button = $(this);
+                if (confirmDelete()) {
+                    $.ajax({
+                        url: "/delete_question/" + keyword + "/" + question_id,
+                        type: "DELETE",
+                        success: function (result) {
+                            delete_button.closest('tr').remove(); // 刪除整行<tr>
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+            });
+
+            // 儲存按鈕的點擊事件處理函數
+            $(content).find(".saveButton").click(function (e) {
+                e.preventDefault();
+                let question_id = $(this).data("id");
+                let keyword = $(this).data("keyword");
+                var editedRow = $(this).closest('tr');
+                var editedContents = {};
+
+                // 確定要更新的屬性
+                var tableType = editedRow.closest('div').attr('class');
+                switch (tableType) {
+                    case 'HRbox':
+                        editedContents['題目內容'] = getCellContent(editedRow, 3);
+                        break;
+                    case 'box1':
+                        editedContents['題目內容'] = getCellContent(editedRow, 3);
+                        editedContents['類別'] = getCellContent(editedRow, 4);
+                        break;
+                    case 'box2':
+                        editedContents['tag'] = getCellContent(editedRow, 3);
+                        editedContents['難度'] = getCellContent(editedRow, 4);
+                        editedContents['題目內容'] = getCellContent(editedRow, 5);
+                        editedContents['類別'] = getCellContent(editedRow, 6);
+                        break;
+                    default:
+                        console.error("Unknown table type");
+                        return;
+                }
+
+                // 將集合字串轉換為字串
+                for (var key in editedContents) {
+                    if (Array.isArray(editedContents[key])) {
+                        editedContents[key] = JSON.stringify(editedContents[key]);
+                    }
+                }
+
+                function getCellContent(row, index) {
+                    var cellContent = row.find('td:nth-child(' + index + ')');
+                    if (cellContent.find('.expanded-content').length > 0) {
+                        return cellContent.find('.expanded-content').text();
+                    } else {
+                        return cellContent.text();
+                    }
+                }
+
+                $.ajax({
+                    url: '/save_to_dynamodb/' + keyword + "/" + question_id,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        editedContents: editedContents,
+                        tableType: tableType
+                    }),
+                    success: function (response) {
+                        alert('修改已成功保存！');
+                    },
+                    error: function (xhr, status, error) {
+                        cancelEdit()
+                        console.error(xhr.responseText);
+                    },
+                    complete: function () {
+
+                        editedRow.find('td:nth-child(n+3):not(:last-child)').attr('contenteditable', false); // 讓第三格到倒數第二格之間的內容不可編輯
+                        editedRow.find('.editButton').show(); // 顯示編輯按鈕
+                        editedRow.find('.deleteButton').show(); // 顯示刪除按鈕
+                        editedRow.find('.saveButton').hide(); // 隱藏儲存按鈕
+                        editedRow.find('.cancelButton').hide(); // 隱藏取消按鈕
+                        isEditing = false;
+                    }
+                });
+            });
+            // 取消按鈕的點擊事件處理函數
+            $(content).find(".cancelButton").click(function (e) {
+                e.preventDefault();
+                cancelEdit();
+            });
+        }
+
+        // 取消編輯
+        function cancelEdit() {
+
+            var editedRow = $('td[contenteditable=true]').closest('tr');
+            originalContents.forEach(function (content, index) {
+                editedRow.find('td:nth-child(' + (index + 3) + ')').html(content); // 還原編輯前的內容
+            });
+            editedRow.find('td:nth-child(n+3):not(:last-child)').attr('contenteditable', false); // 讓第三格到倒數第二格之間的內容不可編輯
+            editedRow.find('.editButton').show(); // 顯示編輯按鈕
+            editedRow.find('.deleteButton').show(); // 顯示刪除按鈕
+            editedRow.find('.saveButton').hide(); // 隱藏儲存按鈕
+            editedRow.find('.cancelButton').hide(); // 隱藏取消按鈕
+            isEditing = false;
+        }
+
+        function confirmDelete() {
+            return confirm("您確定要刪除嗎？");
+        }
+    </script>
+</body>
+
+</html>

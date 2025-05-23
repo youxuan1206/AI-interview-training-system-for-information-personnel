@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <title>新增題目</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+        <style>
+                body {
+                        margin: 0;
+                        display: flex;
+                        flex-direction: column;
+                        flex-wrap: wrap;
+                        align-content: center;
+                        background-color: #efeded;
+                        font-size: 1vw;
+                        /* 使用相對字體大小 */
+                }
+
+                /* 捲軸寬度及高度 */
+                ::-webkit-scrollbar {
+                        width: 10px;
+                        /*右側捲軸寬度*/
+                        height: 10px;
+                        /*下方捲軸高度*/
+                }
+
+                /* 軌道背景底色 */
+                ::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                }
+
+                /* 滑桿顏色 */
+                ::-webkit-scrollbar-thumb {
+                        background: hsl(0, 0%, 67%);
+                }
+
+                /* 滑桿滑鼠滑入時的顏色 */
+                ::-webkit-scrollbar-thumb:hover {
+                        background: #686868;
+                }
+
+                /* 捲軸兩側頂端的按鈕 */
+                ::-webkit-scrollbar-button {
+                        background-color: #2f2f2f;
+                }
+
+                .addcode {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                }
+
+                .selectQ {
+                        background: #e4e3e3;
+                        border-radius: 2vw;
+                        /* 使用相對圓角 */
+                        width: 80%;
+                        /* 使用相對寬度 */
+                        height: 45%;
+                        /* 使用相對高度 */
+                        margin-top: 0.8em;
+                        box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.15);
+                        /* 使用相對陰影大小 */
+                        padding: 15px;
+                        box-sizing: border-box;
+                }
+
+                #user-select {
+                        width: 70%;
+                        margin-right: 5px;
+                }
+
+                .result-container {
+                        display: none;
+                        border: 1px solid #ccc;
+                        padding: 10px;
+                        margin-top: 20px;
+                        max-height: 400px;
+                        overflow-y: auto;
+                        white-space: pre-line;
+                }
+
+                .pagination {
+                        text-align: center;
+                        margin-top: 10px;
+                }
+
+                .pagination button {
+                        margin: 0 5px;
+                }
+
+                .generate {
+                        background: #e4e3e3;
+                        border-radius: 2vw;
+                        /* 使用相對圓角 */
+                        width: 80%;
+                        /* 使用相對寬度 */
+                        height: 90%;
+                        margin: 1.5em 0 3em 0;
+                        /* 使用相對高度 */
+                        box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.15);
+                        /* 使用相對陰影大小 */
+                        padding: 15px;
+                        box-sizing: border-box;
+                }
+
+                .checkbox {
+                        width: 100%;
+                        /* 設置您希望的寬度 */
+                        overflow-x: auto;
+                        /* 添加橫向滾動條 */
+                        white-space: nowrap;
+                        /* 防止內容換行 */
+                }
+
+                .checkbox label {
+                        display: inline-block;
+                        /* 讓每個標籤橫向排列 */
+                        margin-right: 3px;
+                        /* 調整標籤之間的間距 */
+                }
+
+                .checkbox input[type="checkbox"] {
+                        display: none;
+                }
+
+                .list .checkbox input:checked+.button {
+                        background: #f3d61b;
+                        color: #fff;
+                }
+
+                .list .checkbox .button {
+                        display: inline-block;
+                        margin: 5px 5px 3.5px 0;
+                        padding: 5px 10px;
+                        background: #f7f7f7;
+                        color: #333;
+                        cursor: pointer;
+                }
+
+                .list .checkbox .button:hover {
+                        background: #ffee82;
+                        color: #fff;
+                }
+
+                label {
+                        margin-bottom: 3px;
+                }
+
+                .checkbox input:checked+.button {
+                        background: #5e7380;
+                        color: #fff;
+                }
+
+                .checkbox .button {
+                        display: inline-block;
+                        margin: 0 5px 5px 0;
+                        padding: 5px 10px;
+                        background: #f7f7f7;
+                        color: #333;
+                        cursor: pointer;
+                }
+
+                .checkbox .button:hover {
+                        background: #bbb;
+                        color: #fff;
+                }
+
+                .checkbox .round {
+                        border-radius: 5px;
+                }
+
+                #chat-output {
+                        height: 70%;
+                        border: 1px solid #ccc;
+                        margin: 10px 0 10px 0;
+                        padding: 10px;
+                        overflow-y: auto;
+                }
+
+                #user-input {
+                        width: 70%;
+                        padding: 3px;
+                        box-sizing: border-box;
+                        margin-right: 5px;
+                        border: 1px solid #ccc;
+                }
+
+                .message {
+                        margin-bottom: 10px;
+                }
+
+                .question {
+                        border: 1px solid #ccc;
+                        padding: 5px;
+                        margin-top: 5px;
+                        white-space: pre-line;
+                }
+
+                #selected-questions {
+                        border: 1px solid #ccc;
+                        padding: 5px;
+                        margin: 5px 0 5px 0;
+                        white-space: pre-line;
+                }
+
+                button {
+                        border: none;
+                        border-radius: 4px;
+                        margin-bottom: 3pt;
+                        padding: 1.5pt 6pt 1.5pt 6pt;
+                        cursor: pointer;
+                }
+
+                button:hover {
+                        background-color: #aeadadcf;
+                }
+        </style>
+</head>
+
+<body>
+        <div class="addcode">
+                <h1>程式題目新增</h1>
+                <div class="selectQ">
+                        <div>
+                                <label>篩選條件：</label>
+                                <input type="text" id="user-select" name="select" readonly placeholder="請選擇篩選條件">
+                                <button onclick="submitSelect()">提交</button>
+                        </div>
+                        <div class="list">
+                                <label for="keywordType">請選擇篩選條件:</label>
+                                <div class="checkbox" id="checkbox-container">
+                                        <label><input type="checkbox" name="tags" value="Array" /><span
+                                                        class="round button">Array</span></label>
+                                        <label><input type="checkbox" name="tags" value="String" /><span
+                                                        class="round button">String</span></label>
+                                        <label><input type="checkbox" name="tags" value="Hash Table" /><span
+                                                        class="round button">Hash Table</span></label>
+                                        <label><input type="checkbox" name="tags" value="Dynamic Programming" /><span
+                                                        class="round button">Dynamic Programming</span></label>
+                                        <label><input type="checkbox" name="tags" value="Math" /><span
+                                                        class="round button">Math</span></label>
+                                        <label><input type="checkbox" name="tags" value="Sorting" /><span
+                                                        class="round button">Sorting</span></label>
+                                        <label><input type="checkbox" name="tags" value="Greedy" /><span
+                                                        class="round button">Greedy</span></label>
+                                        <label><input type="checkbox" name="tags" value="Depth-First Search" /><span
+                                                        class="round button">Depth-First Search</span></label>
+                                        <label><input type="checkbox" name="tags" value="Database" /><span
+                                                        class="round button">Database</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Search" /><span
+                                                        class="round button">Binary Search</span></label>
+                                        <label><input type="checkbox" name="tags" value="Breadth-First Search" /><span
+                                                        class="round button">Breadth-First Search</span></label>
+                                        <label><input type="checkbox" name="tags" value="Tree" /><span
+                                                        class="round button">Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Matrix" /><span
+                                                        class="round button">Matrix</span></label>
+                                        <label><input type="checkbox" name="tags" value="Bit Manipulation" /><span
+                                                        class="round button">Bit Manipulation</span></label>
+                                        <label><input type="checkbox" name="tags" value="Two Pointers" /><span
+                                                        class="round button">Two Pointers</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Tree" /><span
+                                                        class="round button">Binary Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Heap (Priority Queue)" /><span
+                                                        class="round button">Heap (Priority Queue)</span></label>
+                                        <label><input type="checkbox" name="tags" value="Prefix Sum" /><span
+                                                        class="round button">Prefix Sum</span></label>
+                                        <label><input type="checkbox" name="tags" value="Stack" /><span
+                                                        class="round button">Stack</span></label>
+                                        <label><input type="checkbox" name="tags" value="Simulation" /><span
+                                                        class="round button">Simulation</span></label>
+                                        <label><input type="checkbox" name="tags" value="Graph" /><span
+                                                        class="round button">Graph</span></label>
+                                        <label><input type="checkbox" name="tags" value="Design" /><span
+                                                        class="round button">Design</span></label>
+                                        <label><input type="checkbox" name="tags" value="Counting" /><span
+                                                        class="round button">Counting</span></label>
+                                        <label><input type="checkbox" name="tags" value="Sliding Window" /><span
+                                                        class="round button">Sliding Window</span></label>
+                                        <label><input type="checkbox" name="tags" value="Backtracking" /><span
+                                                        class="round button">Backtracking</span></label>
+                                        <label><input type="checkbox" name="tags" value="Union Find" /><span
+                                                        class="round button">Union Find</span></label>
+                                        <label><input type="checkbox" name="tags" value="Linked List" /><span
+                                                        class="round button">Linked List</span></label>
+                                        <label><input type="checkbox" name="tags" value="Enumeration" /><span
+                                                        class="round button">Enumeration</span></label>
+                                        <label><input type="checkbox" name="tags" value="Ordered Set" /><span
+                                                        class="round button">Ordered Set</span></label>
+                                        <label><input type="checkbox" name="tags" value="Monotonic Stack" /><span
+                                                        class="round button">Monotonic Stack</span></label>
+                                        <label><input type="checkbox" name="tags" value="Trie" /><span
+                                                        class="round button">Trie</span></label>
+                                        <label><input type="checkbox" name="tags" value="Number Theory" /><span
+                                                        class="round button">Number Theory</span></label>
+                                        <label><input type="checkbox" name="tags" value="Divide and Conquer" /><span
+                                                        class="round button">Divide and Conquer</span></label>
+                                        <label><input type="checkbox" name="tags" value="Recursion" /><span
+                                                        class="round button">Recursion</span></label>
+                                        <label><input type="checkbox" name="tags" value="Bitmask" /><span
+                                                        class="round button">Bitmask</span></label>
+                                        <label><input type="checkbox" name="tags" value="Queue" /><span
+                                                        class="round button">Queue</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Search Tree" /><span
+                                                        class="round button">Binary Search Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Segment Tree" /><span
+                                                        class="round button">Segment Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Memoization" /><span
+                                                        class="round button">Memoization</span></label>
+                                        <label><input type="checkbox" name="tags" value="Geometry" /><span
+                                                        class="round button">Geometry</span></label>
+                                        <label><input type="checkbox" name="tags" value="Hash Function" /><span
+                                                        class="round button">Hash Function</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Indexed Tree" /><span
+                                                        class="round button">Binary Indexed Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Topological Sort" /><span
+                                                        class="round button">Topological Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="String Matching" /><span
+                                                        class="round button">String Matching</span></label>
+                                        <label><input type="checkbox" name="tags" value="Combinatorics" /><span
+                                                        class="round button">Combinatorics</span></label>
+                                        <label><input type="checkbox" name="tags" value="Rolling Hash" /><span
+                                                        class="round button">Rolling Hash</span></label>
+                                        <label><input type="checkbox" name="tags" value="Shortest Path" /><span
+                                                        class="round button">Shortest Path</span></label>
+                                        <label><input type="checkbox" name="tags" value="Game Theory" /><span
+                                                        class="round button">Game Theory</span></label>
+                                        <label><input type="checkbox" name="tags" value="Interactive" /><span
+                                                        class="round button">Interactive</span></label>
+                                        <label><input type="checkbox" name="tags" value="Data Stream" /><span
+                                                        class="round button">Data Stream</span></label>
+                                        <label><input type="checkbox" name="tags" value="Brainteaser" /><span
+                                                        class="round button">Brainteaser</span></label>
+                                        <label><input type="checkbox" name="tags" value="Monotonic Queue" /><span
+                                                        class="round button">Monotonic Queue</span></label>
+                                        <label><input type="checkbox" name="tags" value="Randomized" /><span
+                                                        class="round button">Randomized</span></label>
+                                        <label><input type="checkbox" name="tags" value="Merge Sort" /><span
+                                                        class="round button">Merge Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Iterator" /><span
+                                                        class="round button">Iterator</span></label>
+                                        <label><input type="checkbox" name="tags" value="Concurrency" /><span
+                                                        class="round button">Concurrency</span></label>
+                                        <label><input type="checkbox" name="tags" value="Doubly-Linked List" /><span
+                                                        class="round button">Doubly-Linked List</span></label>
+                                        <label><input type="checkbox" name="tags"
+                                                        value="Probability and Statistics" /><span
+                                                        class="round button">Probability and Statistics</span></label>
+                                        <label><input type="checkbox" name="tags" value="Quickselect" /><span
+                                                        class="round button">Quickselect</span></label>
+                                        <label><input type="checkbox" name="tags" value="Bucket Sort" /><span
+                                                        class="round button">Bucket Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Suffix Array" /><span
+                                                        class="round button">Suffix Array</span></label>
+                                        <label><input type="checkbox" name="tags" value="Minimum Spanning Tree" /><span
+                                                        class="round button">Minimum Spanning Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Counting Sort" /><span
+                                                        class="round button">Counting Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Shell" /><span
+                                                        class="round button">Shell</span></label>
+                                        <label><input type="checkbox" name="tags" value="Line Sweep" /><span
+                                                        class="round button">Line Sweep</span></label>
+                                        <label><input type="checkbox" name="tags" value="Reservoir Sampling" /><span
+                                                        class="round button">Reservoir Sampling</span></label>
+                                        <label><input type="checkbox" name="tags"
+                                                        value="Strongly Connected Component" /><span
+                                                        class="round button">Strongly Connected Component</span></label>
+                                        <label><input type="checkbox" name="tags" value="Eulerian Circuit" /><span
+                                                        class="round button">Eulerian Circuit</span></label>
+                                        <label><input type="checkbox" name="tags" value="Radix Sort" /><span
+                                                        class="round button">Radix Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Rejection Sampling" /><span
+                                                        class="round button">Rejection Sampling</span></label>
+                                        <label><input type="checkbox" name="tags" value="Biconnected Component" /><span
+                                                        class="round button">Biconnected Component</span></label>
+                                </div>
+                        </div>
+
+                        <div class="search-result">
+                                <div id="result-container" class="result-container">
+                                        <!-- 這裡將顯示搜尋結果 -->
+                                </div>
+                                <div class="pagination ">
+                                        <button id="prevPage" onclick="prevPage()">Previous</button>
+                                        <button id="nextPage" onclick="nextPage()">Next</button>
+                                        <button id="randomQuestion" onclick="showRandomQuestion()">Random</button>
+                                </div>
+                        </div>
+
+
+                </div>
+                <div class="generate">
+                        <div>
+                                <label for="question">題目內容：</label>
+                                <input type="text" id="user-input" name="question" placeholder="請輸入題目內容">
+                                <button onclick="submitQuestion()">提交</button>
+                        </div>
+                        <!-- 用來顯示搜索結果的容器 -->
+                        <div id="saved-data">
+                                <!-- 顯示儲存的資料 -->
+                        </div>
+
+                        <label for="difficulty">難易度:</label>
+                        <div class="radio">
+                                <label><input type="radio" name="difficulty" value="Easy" /><span>Easy</span></label>
+                                <label><input type="radio" name="difficulty"
+                                                value="Medium" /><span>Medium</span></label>
+                        </div>
+
+                        <div class="list1">
+                                <label for="keywordType">題目tag:</label>
+                                <div class="checkbox">
+                                        <label><input type="checkbox" name="tags" value="Array" /><span
+                                                        class="round button">Array</span></label>
+                                        <label><input type="checkbox" name="tags" value="String" /><span
+                                                        class="round button">String</span></label>
+                                        <label><input type="checkbox" name="tags" value="Hash Table" /><span
+                                                        class="round button">Hash Table</span></label>
+                                        <label><input type="checkbox" name="tags" value="Dynamic Programming" /><span
+                                                        class="round button">Dynamic Programming</span></label>
+                                        <label><input type="checkbox" name="tags" value="Math" /><span
+                                                        class="round button">Math</span></label>
+                                        <label><input type="checkbox" name="tags" value="Sorting" /><span
+                                                        class="round button">Sorting</span></label>
+                                        <label><input type="checkbox" name="tags" value="Greedy" /><span
+                                                        class="round button">Greedy</span></label>
+                                        <label><input type="checkbox" name="tags" value="Depth-First Search" /><span
+                                                        class="round button">Depth-First Search</span></label>
+                                        <label><input type="checkbox" name="tags" value="Database" /><span
+                                                        class="round button">Database</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Search" /><span
+                                                        class="round button">Binary Search</span></label>
+                                        <label><input type="checkbox" name="tags" value="Breadth-First Search" /><span
+                                                        class="round button">Breadth-First Search</span></label>
+                                        <label><input type="checkbox" name="tags" value="Tree" /><span
+                                                        class="round button">Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Matrix" /><span
+                                                        class="round button">Matrix</span></label>
+                                        <label><input type="checkbox" name="tags" value="Bit Manipulation" /><span
+                                                        class="round button">Bit Manipulation</span></label>
+                                        <label><input type="checkbox" name="tags" value="Two Pointers" /><span
+                                                        class="round button">Two Pointers</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Tree" /><span
+                                                        class="round button">Binary Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Heap (Priority Queue)" /><span
+                                                        class="round button">Heap (Priority Queue)</span></label>
+                                        <label><input type="checkbox" name="tags" value="Prefix Sum" /><span
+                                                        class="round button">Prefix Sum</span></label>
+                                        <label><input type="checkbox" name="tags" value="Stack" /><span
+                                                        class="round button">Stack</span></label>
+                                        <label><input type="checkbox" name="tags" value="Simulation" /><span
+                                                        class="round button">Simulation</span></label>
+                                        <label><input type="checkbox" name="tags" value="Graph" /><span
+                                                        class="round button">Graph</span></label>
+                                        <label><input type="checkbox" name="tags" value="Design" /><span
+                                                        class="round button">Design</span></label>
+                                        <label><input type="checkbox" name="tags" value="Counting" /><span
+                                                        class="round button">Counting</span></label>
+                                        <label><input type="checkbox" name="tags" value="Sliding Window" /><span
+                                                        class="round button">Sliding Window</span></label>
+                                        <label><input type="checkbox" name="tags" value="Backtracking" /><span
+                                                        class="round button">Backtracking</span></label>
+                                        <label><input type="checkbox" name="tags" value="Union Find" /><span
+                                                        class="round button">Union Find</span></label>
+                                        <label><input type="checkbox" name="tags" value="Linked List" /><span
+                                                        class="round button">Linked List</span></label>
+                                        <label><input type="checkbox" name="tags" value="Enumeration" /><span
+                                                        class="round button">Enumeration</span></label>
+                                        <label><input type="checkbox" name="tags" value="Ordered Set" /><span
+                                                        class="round button">Ordered Set</span></label>
+                                        <label><input type="checkbox" name="tags" value="Monotonic Stack" /><span
+                                                        class="round button">Monotonic Stack</span></label>
+                                        <label><input type="checkbox" name="tags" value="Trie" /><span
+                                                        class="round button">Trie</span></label>
+                                        <label><input type="checkbox" name="tags" value="Number Theory" /><span
+                                                        class="round button">Number Theory</span></label>
+                                        <label><input type="checkbox" name="tags" value="Divide and Conquer" /><span
+                                                        class="round button">Divide and Conquer</span></label>
+                                        <label><input type="checkbox" name="tags" value="Recursion" /><span
+                                                        class="round button">Recursion</span></label>
+                                        <label><input type="checkbox" name="tags" value="Bitmask" /><span
+                                                        class="round button">Bitmask</span></label>
+                                        <label><input type="checkbox" name="tags" value="Queue" /><span
+                                                        class="round button">Queue</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Search Tree" /><span
+                                                        class="round button">Binary Search Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Segment Tree" /><span
+                                                        class="round button">Segment Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Memoization" /><span
+                                                        class="round button">Memoization</span></label>
+                                        <label><input type="checkbox" name="tags" value="Geometry" /><span
+                                                        class="round button">Geometry</span></label>
+                                        <label><input type="checkbox" name="tags" value="Hash Function" /><span
+                                                        class="round button">Hash Function</span></label>
+                                        <label><input type="checkbox" name="tags" value="Binary Indexed Tree" /><span
+                                                        class="round button">Binary Indexed Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Topological Sort" /><span
+                                                        class="round button">Topological Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="String Matching" /><span
+                                                        class="round button">String Matching</span></label>
+                                        <label><input type="checkbox" name="tags" value="Combinatorics" /><span
+                                                        class="round button">Combinatorics</span></label>
+                                        <label><input type="checkbox" name="tags" value="Rolling Hash" /><span
+                                                        class="round button">Rolling Hash</span></label>
+                                        <label><input type="checkbox" name="tags" value="Shortest Path" /><span
+                                                        class="round button">Shortest Path</span></label>
+                                        <label><input type="checkbox" name="tags" value="Game Theory" /><span
+                                                        class="round button">Game Theory</span></label>
+                                        <label><input type="checkbox" name="tags" value="Interactive" /><span
+                                                        class="round button">Interactive</span></label>
+                                        <label><input type="checkbox" name="tags" value="Data Stream" /><span
+                                                        class="round button">Data Stream</span></label>
+                                        <label><input type="checkbox" name="tags" value="Brainteaser" /><span
+                                                        class="round button">Brainteaser</span></label>
+                                        <label><input type="checkbox" name="tags" value="Monotonic Queue" /><span
+                                                        class="round button">Monotonic Queue</span></label>
+                                        <label><input type="checkbox" name="tags" value="Randomized" /><span
+                                                        class="round button">Randomized</span></label>
+                                        <label><input type="checkbox" name="tags" value="Merge Sort" /><span
+                                                        class="round button">Merge Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Iterator" /><span
+                                                        class="round button">Iterator</span></label>
+                                        <label><input type="checkbox" name="tags" value="Concurrency" /><span
+                                                        class="round button">Concurrency</span></label>
+                                        <label><input type="checkbox" name="tags" value="Doubly-Linked List" /><span
+                                                        class="round button">Doubly-Linked List</span></label>
+                                        <label><input type="checkbox" name="tags"
+                                                        value="Probability and Statistics" /><span
+                                                        class="round button">Probability and Statistics</span></label>
+                                        <label><input type="checkbox" name="tags" value="Quickselect" /><span
+                                                        class="round button">Quickselect</span></label>
+                                        <label><input type="checkbox" name="tags" value="Bucket Sort" /><span
+                                                        class="round button">Bucket Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Suffix Array" /><span
+                                                        class="round button">Suffix Array</span></label>
+                                        <label><input type="checkbox" name="tags" value="Minimum Spanning Tree" /><span
+                                                        class="round button">Minimum Spanning Tree</span></label>
+                                        <label><input type="checkbox" name="tags" value="Counting Sort" /><span
+                                                        class="round button">Counting Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Shell" /><span
+                                                        class="round button">Shell</span></label>
+                                        <label><input type="checkbox" name="tags" value="Line Sweep" /><span
+                                                        class="round button">Line Sweep</span></label>
+                                        <label><input type="checkbox" name="tags" value="Reservoir Sampling" /><span
+                                                        class="round button">Reservoir Sampling</span></label>
+                                        <label><input type="checkbox" name="tags"
+                                                        value="Strongly Connected Component" /><span
+                                                        class="round button">Strongly Connected Component</span></label>
+                                        <label><input type="checkbox" name="tags" value="Eulerian Circuit" /><span
+                                                        class="round button">Eulerian Circuit</span></label>
+                                        <label><input type="checkbox" name="tags" value="Radix Sort" /><span
+                                                        class="round button">Radix Sort</span></label>
+                                        <label><input type="checkbox" name="tags" value="Rejection Sampling" /><span
+                                                        class="round button">Rejection Sampling</span></label>
+                                        <label><input type="checkbox" name="tags" value="Biconnected Component" /><span
+                                                        class="round button">Biconnected Component</span></label>
+                                </div>
+                        </div>
+
+                        <div class="list1">
+                                <label for="keywordType">相關職務類別:</label>
+                                <div class="checkbox">
+                                        <label><input type="checkbox" name="variety" value="iOS工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">iOS工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="軟體工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">軟體工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="AI工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">AI工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="區塊鏈工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">區塊鏈工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="Android工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">Android工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="軟體助理工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">軟體助理工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="演算法工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">演算法工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="BIOS工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">BIOS工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="前端工程師" /><span
+                                                        class="round button">前端工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="軟體專案主管" /><span
+                                                        class="round button">軟體專案主管</span></label>
+                                        <label><input type="checkbox" name="variety" value="韌體工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">韌體工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="通訊軟體工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">通訊軟體工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="後端工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">後端工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="系統分析師" /><span
+                                                        class="round button">系統分析師</span></label>
+                                        <label><input type="checkbox" name="variety" value="電玩程式設計師" /><span
+                                                        class="round button">電玩程式設計師</span></label>
+                                        <label><input type="checkbox" name="variety" value="電子商務技術主管" /><span
+                                                        class="round button">電子商務技術主管</span></label>
+                                        <label><input type="checkbox" name="variety" value="全端工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">全端工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="資料科學家"
+                                                        checked="checked" /><span
+                                                        class="round button">資料科學家</span></label>
+                                        <label><input type="checkbox" name="variety" value="Internet程式設計師" /><span
+                                                        class="round button">Internet程式設計師</span></label>
+                                        <label><input type="checkbox" name="variety" value="數據分析師" /><span
+                                                        class="round button">數據分析師</span></label>
+                                        <label><input type="checkbox" name="variety" value="資料工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">資料工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="資訊助理" /><span
+                                                        class="round button">資訊助理</span></label>
+                                        <label><input type="checkbox" name="variety" value="其他資訊專業人員" /><span
+                                                        class="round button">其他資訊專業人員</span></label>
+                                        <label><input type="checkbox" name="variety" value="系統工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">系統工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="MES工程師" /><span
+                                                        class="round button">MES工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="網路管理工程師" /><span
+                                                        class="round button">網路管理工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="MIS程式設計師"
+                                                        checked="checked" /><span
+                                                        class="round button">MIS程式設計師</span></label>
+                                        <label><input type="checkbox" name="variety" value="資安工程師" /><span
+                                                        class="round button">資安工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="資料庫管理人員" /><span
+                                                        class="round button">資料庫管理人員</span></label>
+                                        <label><input type="checkbox" name="variety" value="資訊設備管制人員" /><span
+                                                        class="round button">資訊設備管制人員</span></label>
+                                        <label><input type="checkbox" name="variety" value="MIS/網管主管" /><span
+                                                        class="round button">MIS/網管主管</span></label>
+                                        <label><input type="checkbox" name="variety" value="雲端工程師"
+                                                        checked="checked" /><span
+                                                        class="round button">雲端工程師</span></label>
+                                        <label><input type="checkbox" name="variety" value="資安主管" /><span
+                                                        class="round button">資安主管</span></label>
+                                        <label><input type="checkbox" name="variety" value="網路安全分析師" /><span
+                                                        class="round button">網路安全分析師</span></label>
+                                </div>
+                        </div>
+
+                        <div class="list1">
+                                <label for="tool">擅長工具:</label>
+                                <div class="checkbox">
+                                        <label><input type="checkbox" name="tool" value="Java" checked="checked" /><span
+                                                        class="round button">Java</span></label>
+                                        <label><input type="checkbox" name="tool" value="C#" checked="checked" /><span
+                                                        class="round button">C#</span></label>
+                                        <label><input type="checkbox" name="tool" value="Linux" /><span
+                                                        class="round button">Linux</span></label>
+                                        <label><input type="checkbox" name="tool" value="JavaScript"
+                                                        checked="checked" /><span
+                                                        class="round button">JavaScript</span></label>
+                                        <label><input type="checkbox" name="tool" value="軟體程式設計"
+                                                        checked="checked" /><span
+                                                        class="round button">軟體程式設計</span></label>
+                                        <label><input type="checkbox" name="tool" value="C++" checked="checked" /><span
+                                                        class="round button">C++</span></label>
+                                        <label><input type="checkbox" name="tool" value="軟體開發Git"/><span
+                                                        class="round button">軟體開發Git</span></label>
+                                        <label><input type="checkbox" name="tool" value="MySQL" /><span
+                                                        class="round button">MySQL</span></label>
+                                        <label><input type="checkbox" name="tool" value="AWS" /><span
+                                                        class="round button">AWS</span></label>
+                                        <label><input type="checkbox" name="tool" value="PHP" /><span
+                                                        class="round button">PHP</span></label>
+                                        <label><input type="checkbox" name="tool" value="CSS" /><span
+                                                        class="round button">CSS</span></label>
+                                        <label><input type="checkbox" name="tool" value="Magento" /><span
+                                                        class="round button">Magento</span></label>
+                                        <label><input type="checkbox" name="tool" value="jQuery" /><span
+                                                        class="round button">jQuery</span></label>
+                                        <label><input type="checkbox" name="tool" value="SEO" /><span
+                                                        class="round button">SEO</span></label>
+                                        <label><input type="checkbox" name="tool" value="ASP.NET" /><span
+                                                        class="round button">ASP.NET</span></label>
+                                        <label><input type="checkbox" name="tool" value="Android" /><span
+                                                        class="round button">Android</span></label>
+                                        <label><input type="checkbox" name="tool" value="Python"
+                                                        checked="checked" /><span
+                                                        class="round button">Python</span></label>
+                                        <label><input type="checkbox" name="tool" value="API" /><span
+                                                        class="round button">API</span></label>
+                                        <label><input type="checkbox" name="tool" value="程式語言" checked="checked" /><span
+                                                        class="round button">程式語言</span></label>
+                                        <label><input type="checkbox" name="tool" value="Firewall" /><span
+                                                        class="round button">Firewall</span></label>
+                                        <label><input type="checkbox" name="tool" value="Vmware" /><span
+                                                        class="round button">Vmware</span></label>
+                                        <label><input type="checkbox" name="tool" value="伺服器網站管理維護" /><span
+                                                        class="round button">伺服器網站管理維護</span></label>
+                                        <label><input type="checkbox" name="tool" value="資訊設備環境設定" /><span
+                                                        class="round button">資訊設備環境設定</span></label>
+                                        <label><input type="checkbox" name="tool" value="安裝與維護網路安全系統" /><span
+                                                        class="round button">安裝與維護網路安全系統</span></label>
+                                        <label><input type="checkbox" name="tool" value="資料備份與復原" /><span
+                                                        class="round button">資料備份與復原</span></label>
+                                        <label><input type="checkbox" name="tool" value="DNS" /><span
+                                                        class="round button">DNS</span></label>
+                                        <label><input type="checkbox" name="tool" value="Ghost" /><span
+                                                        class="round button">Ghost</span></label>
+                                        <label><input type="checkbox" name="tool" value="Oracle" /><span
+                                                        class="round button">Oracle</span></label>
+                                        <label><input type="checkbox" name="tool" value="SQL" /><span
+                                                        class="round button">SQL</span></label>
+                                        <label><input type="checkbox" name="tool" value="資料庫系統管理維護" /><span
+                                                        class="round button">資料庫系統管理維護</span></label>
+                                        <label><input type="checkbox" name="tool" value="ETL" /><span
+                                                        class="round button">ETL</span></label>
+                                        <label><input type="checkbox" name="tool" value="專案管理" /><span
+                                                        class="round button">專案管理</span></label>
+                                        <label><input type="checkbox" name="tool" value="專案時間╱進度控管" /><span
+                                                        class="round button">專案時間╱進度控管</span></label>
+                                        <label><input type="checkbox" name="tool" value="專案成本╱品質╱風險管理" /><span
+                                                        class="round button">專案成本╱品質╱風險管理</span></label>
+                                        <label><input type="checkbox" name="tool" value="專案經理" /><span
+                                                        class="round button">專案經理</span></label>
+                                        <label><input type="checkbox" name="tool" value="clinicaltrial" /><span
+                                                        class="round button">clinicaltrial</span></label>
+                                        <label><input type="checkbox" name="tool" value="NPI" /><span
+                                                        class="round button">NPI</span></label>
+                                        <label><input type="checkbox" name="tool" value="溝通協調" /><span
+                                                        class="round button">溝通協調</span></label>
+                                        <label><input type="checkbox" name="tool" value="project manage" /><span
+                                                        class="round button">project manage</span></label>
+                                        <label><input type="checkbox" name="tool" value="Planning" /><span
+                                                        class="round button">Planning</span></label>
+                                        <label><input type="checkbox" name="tool" value="提案與簡報技巧" /><span
+                                                        class="round button">提案與簡報技巧</span></label>
+                                        <label><input type="checkbox" name="tool" value="SAP" /><span
+                                                        class="round button">SAP</span></label>
+                                        <label><input type="checkbox" name="tool" value="ERP" /><span
+                                                        class="round button">ERP</span></label>
+                                        <label><input type="checkbox" name="tool" value="需求訪談" /><span
+                                                        class="round button">需求訪談</span></label>
+                                        <label><input type="checkbox" name="tool" value="ABAP" /><span
+                                                        class="round button">ABAP</span></label>
+                                        <label><input type="checkbox" name="tool" value="資料庫系統" /><span
+                                                        class="round button">資料庫系統</span></label>
+                                        <label><input type="checkbox" name="tool" value="營運" /><span
+                                                        class="round button">營運</span></label>
+                                        <label><input type="checkbox" name="tool" value="經營規劃" /><span
+                                                        class="round button">經營規劃</span></label>
+                                        <label><input type="checkbox" name="tool" value="軟體開發" checked="checked" /><span
+                                                        class="round button">軟體開發</span></label>
+                                </div>
+                        </div>
+
+                        <div id="chat-output"></div>
+                </div>
+                <button type="submit" id="submit-btn" style="border:1px solid #686868;">提交</button>
+        </div>
+
+        <script src="../static/scripts/script.js"></script>
+        <script>
+                let currentPageIndex = 0;
+                let pageSize = 1; // 每頁顯示的資料筆數
+                let savedData = [];
+
+                async function loadJSON() {
+                        const response = await fetch('/json_data');
+                        const data = await response.json();
+                        return data;
+                }
+
+                async function loadLastSavedData() {
+                        const jsonData = await loadJSON();
+                        const lastPageIndex = Math.ceil(jsonData.length / pageSize) - 1; // 計算最後一頁的索引
+                        currentPageIndex = lastPageIndex; // 將目前頁面設置為最後一頁
+                        displayResults(jsonData); // 呼叫顯示結果的函數，將資料傳遞給它
+                }
+
+                async function allSavedData() {
+                        const jsonData = await loadJSON();
+                        displayResults(jsonData); // 呼叫顯示結果的函數，將資料傳遞給它
+                }
+
+                window.addEventListener('DOMContentLoaded', (event) => {
+                        // 在 DOM 內容載入完成後執行的程式碼
+                        loadLastSavedData();
+
+                });
+
+                // 添加點擊事件處理程序到包含所有 checkbox 的父元素上
+                document.getElementById('checkbox-container').addEventListener('click', function (event) {
+                        // 檢查點擊的是 checkbox 元素
+                        if (event.target.type === 'checkbox') {
+                                // 調用更新函式
+                                updateInputText();
+                        }
+                });
+
+                function updateInputText() {
+                        var selectedTags = [];
+                        var listElement = document.querySelector('.list');
+                        var checkboxes = listElement.querySelectorAll('input[name="tags"]:checked');
+                        checkboxes.forEach(function (checkbox) {
+                                selectedTags.push(checkbox.value);
+                        });
+                        document.getElementById('user-select').value = selectedTags.join(', ');
+                }
+
+                async function searchJSONByTitle(title) {
+                        const data = await loadJSON();
+                        const result = data.filter(item => item.title === title);
+                        return result;
+                }
+
+                async function searchJSONByTag(tags) {
+                        const data = await loadJSON();
+                        const selectedTags = tags.split(','); // 將選擇的標籤分割為陣列
+                        const filteredData = data.filter(item => {
+                                // 如果 item.tag 存在，就將其轉換為陣列，否則返回空陣列
+                                const tagsArray = (item.tag || '').split(',');
+                                // 檢查標籤是否包含所有選擇的標籤
+                                return selectedTags.every(tag => tagsArray.includes(tag.trim()));
+                        });
+
+                        // 只返回符合條件的資料的標題和內容
+                        const results = filteredData.map(item => ({
+                                title: item.title,
+                                content: item.content
+                        }));
+                        return results;
+                }
+
+                async function submitSelect() {
+                        const selectedTag = document.getElementById('user-select').value;
+                        console.log('選擇的標籤:', selectedTag); // 添加這行以檢查選擇的標籤是否正確
+
+                        // 調用 searchJSONByTag 函式來查詢符合所選標籤的資料內容
+                        const results = await searchJSONByTag(selectedTag);
+                        console.log('搜尋結果:', results); // 添加這行以檢查搜索結果是否正確
+
+
+                        // 顯示第一頁資料
+                        currentPageIndex = 0;
+                        displayResults(results);
+
+                        // 如果有搜尋結果，將第一個標題設置為輸入框的值
+                        if (results.length > 0) {
+                                document.getElementById('user-input').value = results[0].title;
+                        }
+                }
+
+                function displayResults(results) {
+                        const resultContainer = document.getElementById('result-container');
+                        resultContainer.innerHTML = ''; // 清空先前的內容
+
+                        // 計算目前頁面的起始索引和結束索引
+                        const startIndex = currentPageIndex * pageSize;
+                        const endIndex = Math.min(startIndex + pageSize, results.length);
+
+                        // 顯示目前頁面的資料
+                        for (let i = startIndex; i < endIndex; i++) {
+                                const result = results[i];
+
+                                const titleElement = document.createElement('h3');
+                                titleElement.textContent = result.title;
+                                resultContainer.appendChild(titleElement);
+
+                                const contentElement = document.createElement('p');
+                                contentElement.textContent = result.content;
+                                resultContainer.appendChild(contentElement);
+                        }
+
+                        // 更新輸入框的值為目前頁面的第一個標題
+                        if (results.length > 0) {
+                                document.getElementById('user-input').value = results[startIndex].title;
+                        }
+                        // 更新翻頁按鈕的狀態
+                        const prevPageButton = document.getElementById('prevPage');
+                        const nextPageButton = document.getElementById('nextPage');
+                        prevPageButton.disabled = currentPageIndex === 0;
+                        nextPageButton.disabled = endIndex >= results.length;
+
+                }
+
+                function prevPage() {
+                        if (currentPageIndex > 0) {
+                                currentPageIndex--;
+                                const selectedTag = document.getElementById('user-select').value;
+                                if (selectedTag.trim() !== '') {
+                                        searchJSONByTag(selectedTag)
+                                                .then(results => displayResults(results))
+                                                .catch(error => console.error(error));
+                                } else {
+                                        allSavedData();
+                                }
+                        }
+                }
+
+                function nextPage() {
+
+                        currentPageIndex++;
+                        const selectedTag = document.getElementById('user-select').value;
+                        if (selectedTag.trim() !== '') {
+                                searchJSONByTag(selectedTag)
+                                        .then(results => displayResults(results))
+                                        .catch(error => console.error(error));
+                        } else {
+                                allSavedData();
+                        }
+                }
+
+                function showRandomQuestion() {
+                        const selectedTag = document.getElementById('user-select').value;
+                        searchJSONByTag(selectedTag)
+                                .then(results => {
+                                        if (results.length > 0) {
+                                                const randomIndex = Math.floor(Math.random() * results.length);
+                                                const randomQuestion = results[randomIndex];
+                                                document.getElementById('user-input').value = randomQuestion.title;
+                                                document.getElementById('result-container').innerHTML = `<h3>${randomQuestion.title}</h3><p>${randomQuestion.content}</p>`;
+
+                                                // 更新 currentPageIndex
+                                                currentPageIndex = Math.floor(randomIndex / pageSize);
+
+                                                // 更新翻頁按鈕的狀態
+                                                const totalResults = results.length;
+                                                const totalPages = Math.ceil(totalResults / pageSize);
+
+                                                // 根據需要更新下一頁和上一頁按鈕的狀態
+                                                const nextButton = document.getElementById('nextPage');
+                                                const prevButton = document.getElementById('prevPage');
+
+                                                if (currentPageIndex < totalPages - 1) {
+                                                        nextButton.disabled = false;
+                                                } else {
+                                                        nextButton.disabled = true;
+                                                }
+
+                                                if (currentPageIndex > 0) {
+                                                        prevButton.disabled = false;
+                                                } else {
+                                                        prevButton.disabled = true;
+                                                }
+                                        }
+                                })
+                                .catch(error => console.error(error));
+                }
+
+                async function submitQuestion() {
+                        savedData = [];
+                        const userInput = document.getElementById('user-input').value;
+                        const result = await searchJSONByTitle(userInput);
+
+                        if (!userInput) {
+                                alert("無法取得題目。");
+                                return;
+                        }
+
+                        if (result.length > 0) {
+                                savedData.push(result[0]);
+                                displaySavedData();
+                                console.log(result);
+                        }
+
+                        await submitcontent();
+                }
+
+                function displaySavedData() {
+
+                        // 決定難易度的預設勾選狀態
+                        const difficultyRadios = document.getElementsByName('difficulty');
+                        difficultyRadios.forEach(radio => {
+                                radio.checked = false; // 清除所有勾選
+                                if (savedData.length > 0 && savedData[savedData.length - 1].difficulty === radio.value) {
+                                        radio.checked = true; // 根據最後一筆儲存的資料設置勾選狀態
+                                }
+                        });
+
+                        // 決定題目tag的預設勾選狀態
+                        const list1Element = document.querySelector('.list1');
+                        const tagCheckboxes = list1Element.querySelectorAll('input[name="tags"]');
+                        tagCheckboxes.forEach(checkbox => {
+                                checkbox.checked = false; // 清除所有勾選
+                                savedData.forEach(item => {
+                                        if (item.tag.includes(checkbox.value)) {
+                                                checkbox.checked = true; // 如果最後一筆儲存的資料包含該tag，設置勾選狀態
+                                        }
+                                });
+                        });
+                }
+
+        </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+                window.onload = function () {
+                        const submitBtn = document.getElementById('submit-btn');
+                        submitBtn.onclick = async function () {
+                                try {
+                                        const userSelection = await getUserSelection();
+                                        if (userSelection) { // 只有當 userSelection 不為 null 時才提交表單
+                                                const maxQuestionNumber = await getMaxQuestionNumber();
+                                                userSelection.questionNumber = maxQuestionNumber + 1;
+                                                await handleSubmission(userSelection);
+                                                alert('提交完成！');
+                                        }
+                                } catch (error) {
+                                        console.error("Error processing submission:", error);
+                                }
+                        };
+                };
+
+                // 取得最大題目編號的函式
+                function getMaxQuestionNumber() {
+                        return new Promise((resolve, reject) => {
+                                $.ajax({
+                                        url: '/get_max_question_number',
+                                        type: 'GET',
+                                        success: function (data) {
+                                                resolve(data.maxQuestionNumber);
+                                        },
+                                        error: function (xhr, status, error) {
+                                                reject(error);
+                                        }
+                                });
+                        });
+                }
+
+                async function getUserSelection() {
+                        const selectedTools = [];
+                        const selectedVarieties = [];
+                        const selectedTags = [];
+                        let selectedDifficulty = '';
+                        let selectedQuestionContent = '';
+
+                        // 獲取被勾選的工具
+                        document.querySelectorAll('.list1 input[name="tool"]:checked').forEach(checkbox => {
+                                selectedTools.push(checkbox.value);
+                        });
+
+                        // 獲取被勾選的職務類別
+                        document.querySelectorAll('.list1 input[name="variety"]:checked').forEach(checkbox => {
+                                selectedVarieties.push(checkbox.value);
+                        });
+
+                        // 獲取被勾選的題目標籤
+                        document.querySelectorAll('.list1 input[name="tags"]:checked').forEach(checkbox => {
+                                selectedTags.push(checkbox.value);
+                        });
+
+                        // 獲取被選中的難易度
+                        document.querySelectorAll('input[name="difficulty"]:checked').forEach(radio => {
+                                selectedDifficulty = radio.value;
+                        });
+
+                        // 獲取題目內容
+                        const checkboxes = document.querySelectorAll('.save-checkbox');
+                        const checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+
+                        // 防呆檢查
+                        if (checkedCheckboxes.length > 1) {
+                                alert('請一次儲存一個！！');
+                                return null; // 返回 null 以阻止提交
+                        }
+
+                        // 如果沒有選中的 checkbox，返回空值
+                        if (checkedCheckboxes.length === 0) {
+                                alert('沒有勾選的題目！');
+                                return null;
+                        }
+
+                        checkboxes.forEach((checkbox, index) => {
+                                if (checkbox.checked) {
+                                        const parentMessage = checkbox.closest('.message'); // 找到包含 checkbox 的 message 元素
+                                        const question = parentMessage.querySelector('.question'); // 從包含 checkbox 的 message 元素中找到問題內容
+                                        if (question) {
+                                                selectedQuestionContent += question.innerText + '\n'; // 僅存儲問題內容
+                                        }
+                                }
+                        });
+
+                        // 獲取最大題目編號
+                        const maxQuestionNumber = await getMaxQuestionNumber();
+
+                        // 將結果格式化成物件並返回
+                        const userSelection = {
+                                questionNumber: maxQuestionNumber + 1,
+                                tools: selectedTools,
+                                varieties: selectedVarieties,
+                                tags: selectedTags,
+                                difficulty: selectedDifficulty,
+                                questionContent: selectedQuestionContent.trim()
+                        };
+
+                        return userSelection;
+                }
+
+                function handleSubmission(userSelection) {
+                        return new Promise((resolve, reject) => {
+                                $.ajax({
+                                        url: '/submit',
+                                        type: 'POST',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(userSelection),
+                                        success: function (data) {
+                                                resolve(data);
+                                        },
+                                        error: function (xhr, status, error) {
+                                                reject(error);
+                                        }
+                                });
+                        });
+                }
+
+        </script>
+
+</body>
+
+</html>

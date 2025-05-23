@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>點數管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .point-search {
+            height: 3.5vw;
+            right: 10%;
+            margin-top: -2.5vw;
+            position: absolute;
+            font-size: 1.5vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: black;
+        }
+
+        .rectangle-content {
+            background: #e4e3e3;
+            border-radius: 15pt;
+            /* 使用相對圓角 */
+            width: 65vw;
+            /* 使用相對寬度 */
+            height: 28vw;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 30vw;
+            /* 使用相對水平位置 */
+            margin-top: 2em;
+            box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.15);
+            /* 使用相對陰影大小 */
+            overflow: auto;
+            visibility: hidden;
+        }
+
+        /* 點數贈送 */
+        .box {
+            background: #e4e3e3;
+            border-radius: 15pt;
+            /* 使用相對圓角 */
+            width: 65vw;
+            /* 使用相對寬度 */
+            height: 28vw;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 30vw;
+            /* 使用相對水平位置 */
+            margin-top: 2em;
+            /* 使用相對垂直位置 */
+            box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.15);
+            /* 使用相對陰影大小 */
+        }
+
+        /* 定價方案 */
+        .group-11,
+        .group-11 * {
+            box-sizing: border-box;
+        }
+
+        .group-11 {
+            width: 14vw;
+            /* 使用相對寬度 */
+            height: 10vh;
+            /* 使用相對高度 */
+            position: relative;
+        }
+
+        .rectangle-29 {
+            background: #8c9294;
+            border-radius: 2vw;
+            /* 使用相對圓角 */
+            width: 15vw;
+            /* 使用相對寬度 */
+            height: 8vh;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 95%;
+            top: 60%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .group-11 .div {
+            color: #000000;
+            text-align: center;
+            /* 文字置中 */
+            font-size: 2vw;
+            /* 使用相對字體大小 */
+            font-weight: 400;
+            position: absolute;
+            left: 50%;
+            /* 使用相對水平位置 */
+            top: 50%;
+            /* 使用相對垂直位置 */
+            transform: translate(-50%, -50%);
+            /* 使用相對置中 */
+            width: 20vw;
+            /* 使用相對寬度 */
+            height: auto;
+            /* 自動調整高度 */
+        }
+
+        /* 點數費率 */
+        .group-12,
+        .group-12 * {
+            box-sizing: border-box;
+        }
+
+        .group-12 {
+            height: 5vh;
+            /* 使用相對高度 */
+            position: relative;
+        }
+
+        .group-12 .rectangle-29 {
+            background: #8c9294;
+            border-radius: 2vw;
+            /* 使用相對圓角 */
+            width: 15vw;
+            /* 使用相對寬度 */
+            height: 8vh;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 55%;
+            top: -80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .group-12 .div {
+            color: #000000;
+            text-align: center;
+            /* 文字置中 */
+            font-size: 2vw;
+            /* 使用相對字體大小 */
+            font-weight: 400;
+            position: absolute;
+            left: 50%;
+            /* 使用相對水平位置 */
+            top: 50%;
+            /* 使用相對垂直位置 */
+            transform: translate(-50%, -50%);
+            /* 使用相對置中 */
+            width: 20vw;
+            /* 使用相對寬度 */
+            height: auto;
+            /* 自動調整高度 */
+        }
+
+        .rectangle-33 {
+            background: #bbbcbc;
+            border-radius: 2vw;
+            /* 使用相對圓角 */
+            width: 50vw;
+            /* 使用相對寬度 */
+            height: 36vh;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 50%;
+            /* 使用相對水平位置 */
+            top: 50%;
+            /* 使用相對垂直位置 */
+            transform: translate(-50%, -50%);
+            /* 使用相對置中 */
+        }
+
+        .sevenPoints {
+            color: #000000;
+            text-align: center;
+            /* 文字置中 */
+            font-size: 20vw;
+            /* 使用相對字體大小 */
+            font-weight: 400;
+            position: absolute;
+            left: 6%;
+            /* 使用相對水平位置 */
+            top: 20%;
+            /* 使用相對垂直位置 */
+            width: 20vw;
+            /* 使用相對寬度 */
+            height: auto;
+            /* 自動調整高度 */
+        }
+
+        .thirtyPoints {
+            color: #000000;
+            text-align: center;
+            /* 文字置中 */
+            font-size: 20vw;
+            /* 使用相對字體大小 */
+            font-weight: 400;
+            position: absolute;
+            left: 6%;
+            /* 使用相對水平位置 */
+            top: 60%;
+            /* 使用相對垂直位置 */
+            width: 20vw;
+            /* 使用相對寬度 */
+            height: auto;
+            /* 自動調整高度 */
+        }
+
+        /* 媒体查询 */
+        @media screen and (max-width: 768px) {
+            .group-11 {
+                width: 90vw;
+            }
+
+            .group-12 {
+                width: 90vw;
+            }
+        }
+
+        label[for=sevenPoints],
+        label[for=thirtyPoints] {
+            font-size: 2vw;
+            margin-right: 18vw;
+            /* 已經存在的右邊距 */
+            position: relative;
+            /* 使 top 和 left 屬性生效 */
+            top: 3.1vw;
+            /* 向下移動 */
+            left: 8.5vw;
+            /* 向右移動 */
+        }
+
+        label[for=sevenPoints] {
+            font-size: 2vw;
+            margin-right: 18vw;
+            /* 已經存在的右邊距 */
+            position: relative;
+            /* 使 top 和 left 屬性生效 */
+            top: 3.1vw;
+            /* 向下移動 */
+            left: 9.3vw;
+            /* 向右移動 */
+        }
+
+        #sevenPoints,
+        #thirtyPoints {
+            margin-left: 26vw;
+            /* 需要向右移動的距離 */
+            margin-top: 1.0vw;
+            /* 需要向下移动的距离 */
+        }
+
+        #updateButton2 {
+            margin-left: 1.2vw;
+            /* 需要向右移動的距離，這裡是設定新的值 */
+        }
+
+        .table-bordered {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Navigation_bar">
+        <img src="/static/image/logo.png" class="logo" />
+        <div class="button-container">
+            <a class="link_button" id="userBtn" href="/user">使用者管理</a>
+            <a class="link_button" id="questionBtn" href="/question">題目管理</a>
+            <a class="link_button" id="reportBtn" href="/report">分析報告管理</a>
+            <a class="link_button" id="pointBtn" href="/point">點數管理</a>
+            <a class="link_button" id="problemBtn" href="/problem">問題回報管理</a>
+        </div>
+    </div>
+    <div class="div-user">點數管理</div>
+    <div class="rectangle">
+        <div class="pointmanager">
+            <button id="pointmanager" class="box-button"
+                onclick="showContent('rectangle-content','pointmanager')">點數管理</button>
+        </div>
+        <div class="pointupdate">
+            <button id="pointupdate" class="box-button" onclick="showContent('box','pointupdate')">點數費率</button>
+        </div>
+
+    </div>
+
+    <div class="point-search">
+        <form method="POST">
+            使用者編號: <input type="text" name="user_id" />
+            <input type="submit" value="查詢" />
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class=flashes>
+                {% for message in messages %}
+                <div class=flash>{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </form>
+    </div>
+
+    <!-- 點數管理 -->
+    <div class="rectangle-content">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>使用者編號</th>
+                    <!-- <th>交易編號</th> -->
+                    <th>日期</th>
+                    <th>總點數</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for outerPoint in points %}
+                {% if outerPoint['交易編號'] == "*" %}
+                <tr>
+                    <td>{{ outerPoint['使用者編號'] }}</td>
+                    <!-- <td>{{ outerPoint['交易編號'] }}</td> -->
+                    <td>{{ outerPoint['日期'] }}</td>
+                    <td>{{ outerPoint['總點數'] }}</td>
+                    <td>
+                        <button class="f-btn editButton" data-userid="{{ outerPoint['使用者編號'] }}"
+                            data-totalpoints="{{ outerPoint['總點數'] }}">修改總點數</button>
+                        <input type="number" class="editTotalPointsInput" id="{{ 'input' + outerPoint['使用者編號'] }}"
+                            value="{{ outerPoint['總點數'] }}" style="display: none;">
+                        <button class="f-btn submitEditButton" data-userid="{{ outerPoint['使用者編號'] }}"
+                            style="display: none;">確定修改</button>
+                        <button class="f-btn cancelButton" style="display: none;">取消</button>
+                        <!-- 新增：顯示更多按鈕 -->
+                        <button class="f-btn showMoreButton" data-userid="{{ outerPoint['使用者編號'] }}">顯示更多</button>
+                    </td>
+                </tr>
+                <!-- 隱藏的 "更多資訊" 行 -->
+                <tr class="moreInfo" id="info{{ outerPoint['使用者編號'] }}" style="display: none;">
+                    <td colspan="6">
+                        <div>這裡是使用者編號為 {{ outerPoint['使用者編號'] }} 的更多資訊。</div>
+                        <table class="table-bordered ">
+                            <tr>
+                                <th>使用者編號</th>
+                                <th>交易編號</th>
+                                <th>日期</th>
+                                <th>變動</th>
+                                <th>總點數</th>
+                                <th>類型</th>
+                            </tr>
+                            <tbody>
+                                {% for innerPoint in points %}
+                                {% if innerPoint['使用者編號'] == outerPoint['使用者編號'] %}
+                                <tr>
+                                    <td>{{ innerPoint['使用者編號'] }}</td>
+                                    <td>{{ innerPoint['交易編號'] }}</td>
+                                    <td>{{ innerPoint['日期'] }}</td>
+                                    <td>{{ innerPoint['變動'] }}</td>
+                                    <td>{{ innerPoint['總點數'] }}</td>
+                                    <td>{{ innerPoint['類型'] }}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- 點數費率 -->
+    <div class="box">
+
+        <div class="rectangle-33">
+            {% for user in users %}
+            {% if user.點數 == "七點" %}
+            <label for="sevenPoints">七點方案</label>
+            <form action="{{ url_for('update_rate', points='七點') }}" method="post" onsubmit="return confirmUpdate()">
+                <input type="text" id="sevenPoints" name="rate" value="{{ user.價格 }}">
+                <input class="f-btn" type="submit" value="更新" id="updateButton2">
+            </form>
+            <br>
+            {% elif user.點數 == "三十點" %}
+            <label for="thirtyPoints">三十點方案</label>
+            <form action="{{ url_for('update_rate', points='三十點') }}" method="post" onsubmit="return confirmUpdate()">
+                <input type="text" id="thirtyPoints" name="rate" value="{{ user.價格 }}">
+                <input class="f-btn" type="submit" value="更新" id="updateButton2">
+            </form>
+            {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 初始顯示內容
+            showContent('box', 'pointupdate'); // 顯示預設內容
+        });
+
+        function showContent(contentClass, buttonId) {
+            // 隱藏所有內容
+            var allContents = document.querySelectorAll('.rectangle-content, .box');
+            allContents.forEach(function (content) {
+                content.style.visibility = 'hidden';
+            });
+
+            // 顯示特定的內容
+            var targetContent = document.querySelector('.' + contentClass);
+            if (targetContent) {
+                targetContent.style.visibility = 'visible';
+                // 如果顯示的是 rectangle-content，則顯示 point-search
+                if (contentClass === 'rectangle-content') {
+                    document.querySelector('.point-search').style.display = 'block';
+                } else {
+                    // 否則隱藏 point-search
+                    document.querySelector('.point-search').style.display = 'none';
+                }
+            }
+
+            // 移除所有按鈕的 active 類
+            var allButtons = document.querySelectorAll('.box-button');
+            allButtons.forEach(function (button) {
+                button.classList.remove('active');
+            });
+
+            // 為當前按鈕添加 active 類
+            var activeButton = document.getElementById(buttonId);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        function confirmUpdate() {
+            return confirm("確定要更新點數費率嗎？");
+        }
+
+        function confirmEdit(userId) {
+            return confirm(`確定要修改該使用者 ${userId} 的點數嗎？`);
+        }
+
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                alert("點數更新成功！");
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // 當修改按鈕被點擊時執行
+            $('.editButton').click(function () {
+                const userid = $(this).attr('data-userid');
+                const transactionid = $(this).attr('data-transactionid'); // 獲取交易編號鍵
+                $(this).hide();
+                $('#input' + userid).show();
+                $(this).siblings('.submitEditButton, .cancelButton').show();
+            });
+
+            // 點擊取消按鈕時，隱藏輸入框和確認按鈕，顯示修改按鈕
+            $('.cancelButton').click(function () {
+                $(this).hide();
+                $(this).siblings('.editButton').show();
+                $(this).siblings('.editTotalPointsInput, .submitEditButton').hide();
+            });
+
+            $(document).ready(function () {
+                // 當確定修改按鈕被點擊時提交修改
+                $('.submitEditButton').click(function () {
+                    const userid = $(this).attr('data-userid');
+                    const transactionid = $(this).attr('data-transactionid');
+                    let newTotalPoints = $(this).siblings('.editTotalPointsInput').val();
+
+                    let originalTotalPoints = parseInt($(`.editButton[data-userid='${userid}']`).attr('data-totalpoints'));
+
+                    if (isNaN(newTotalPoints)) {
+                        newTotalPoints = 0;
+                    }
+                    newTotalPoints = parseInt(newTotalPoints);
+
+                    if (isNaN(originalTotalPoints)) {
+                        originalTotalPoints = 0;
+                    }
+                    // 確認對話框
+                    if (confirm(`確定要修改該使用者 ${userid} 的點數嗎？`)) {
+                        $.post('{{ url_for("update_total_points") }}',
+                            {
+                                'userid': userid,
+                                'transactionid': transactionid,
+                                'originalTotalPoints': originalTotalPoints,
+                                'newTotalPoints': newTotalPoints
+                            }, function (data, status) {
+                                console.log("Status: ", status);
+                                console.log("Data: ", data);
+                                location.reload();
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.showMoreButton').click(function () {
+                var userid = $(this).data('userid'); // 獲取 data-userid 屬性的值
+                $('#info' + userid).toggle(); // 切換指定ID的元素的顯示或隱藏
+
+                // 檢查按鈕的當前文字，並將其切換到另一種狀態
+                if ($(this).text() == "顯示更多") {
+                    $(this).text("顯示較少");
+                } else {
+                    $(this).text("顯示更多");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

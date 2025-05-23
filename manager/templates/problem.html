@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>問題回報管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .rectangle-content {
+            background: #e4e3e3;
+            border-radius: 15pt;
+            width: 65vw;
+            /* 使用相對寬度 */
+            height: 28vw;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 30vw;
+            /* 使用相對水平位置 */
+            margin-top: 2em;
+            box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.1);
+            /* 使用相對陰影大小 */
+            overflow: auto;
+        }
+
+        /* 點數贈送 */
+        .box,
+        .box2 {
+            background: #e4e3e3;
+            border-radius: 15pt;
+            width: 65vw;
+            /* 使用相對寬度 */
+            height: 28vw;
+            /* 使用相對高度 */
+            position: absolute;
+            left: 30vw;
+            /* 使用相對水平位置 */
+            margin-top: 2em;
+            box-shadow: 0.5vw 0.5vw 0.5vw 0vw rgba(0, 0, 0, 0.25);
+            /* 使用相對陰影大小 */
+            visibility: hidden;
+            overflow: auto;
+        }
+
+        /* 題目相關問題 */
+        .button3,
+        .button3 * {
+            box-sizing: border-box;
+        }
+
+        .button3 {
+            background: #d4dbe0;
+            border-radius: 1vw;
+            /* 使用相對圓角 */
+            width: 16vw;
+            /* 使用相對寬度 */
+            height: 3.5vw;
+            /* 使用相對高度 */
+            position: absolute;
+            top: 80%;
+            /* 使用相對垂直位置 */
+            left: 50%;
+            /* 使用相對水平位置 */
+            transform: translate(-50%, -50%);
+            /* 使用相對置中 */
+            font-size: 2vw;
+            /* 使用相對字體大小 */
+            display: flex;
+            justify-content: center;
+            /* 使用相對內容置中 */
+            align-items: center;
+            /* 使用相對內容置中 */
+            border: 0.2vw solid rgb(104, 104, 104);
+            /* 使用相對邊框粗細 */
+        }
+
+        .button3:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            /* 使用:hover時增大尺寸 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Navigation_bar">
+        <img src="/static/image/logo.png" class="logo" />
+        <div class="button-container">
+            <a class="link_button" id="userBtn" href="/user">使用者管理</a>
+            <a class="link_button" id="questionBtn" href="/question">題目管理</a>
+            <a class="link_button" id="reportBtn" href="/report">分析報告管理</a>
+            <a class="link_button" id="pointBtn" href="/point">點數管理</a>
+            <a class="link_button" id="problemBtn" href="/problem">問題回報管理</a>
+        </div>
+    </div>
+    <div class="div-user">問題回報管理</div>
+
+    <div class="rectangle">
+        <div class="reportprob">
+            <button id="reportprob" class="box-button"
+                onclick="showContent('rectangle-content','reportprob')">分析報告問題</button>
+        </div>
+        <div class="pointprob">
+            <button id="pointprob" class="box-button" onclick="showContent('box','pointprob')">點數問題</button>
+        </div>
+        <div class="questionprob">
+            <button id="questionprob" class="box-button" onclick="showContent('box2','questionprob')">題目問題</button>
+        </div>
+    </div>
+
+    <!-- 分析相關問題 -->
+    <div class="rectangle-content">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>使用者編號</th>
+                    <th>問題編號</th>
+                    <th>問題類型</th>
+                    <th>問題內容</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            {% for item in analysis_problems %}
+            <tr>
+                <td>{{ item['使用者編號'] }}</td>
+                <td>{{ item['問題編號'] }}</td>
+                <td>{{ item['type'] }}</td>
+                <td>{{ item['description'] }}</td>
+                <td>
+                    <button class="f-btn deleteButton" data-key="{{ item['使用者編號'] }}" data-id="{{ item['問題編號'] }}">刪除</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- 點數相關問題 -->
+    <div class="box">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>使用者編號</th>
+                    <th>問題編號</th>
+                    <th>問題類型</th>
+                    <th>問題內容</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            {% for item in point_problems %}
+            <tr>
+                <td>{{ item['使用者編號'] }}</td>
+                <td>{{ item['問題編號'] }}</td>
+                <td>{{ item['type'] }}</td>
+                <td>{{ item['description'] }}</td>
+                <td>
+                    <button class="f-btn deleteButton" data-key="{{ item['使用者編號'] }}" data-id="{{ item['問題編號'] }}">刪除</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- 題目相關問題 -->
+    <div class="box2">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>使用者編號</th>
+                    <th>問題編號</th>
+                    <th>問題類型</th>
+                    <th>問題內容</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            {% for item in question_problems %}
+            <tr>
+                <td>{{ item['使用者編號'] }}</td>
+                <td>{{ item['問題編號'] }}</td>
+                <td>{{ item['type'] }}</td>
+                <td>{{ item['description'] }}</td>
+                <td>
+                    <button class="f-btn deleteButton" data-key="{{ item['使用者編號'] }}" data-id="{{ item['問題編號'] }}">刪除</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 初始顯示內容
+            showContent('rectangle-content', 'reportprob'); // 顯示預設內容
+        });
+
+        function showContent(contentClass, buttonId) {
+            var allContents = document.querySelectorAll(".rectangle-content, .box, .box2");
+            allContents.forEach(function (content) {
+                content.style.visibility = "hidden";
+            });
+
+            var targetContent = document.querySelector("." + contentClass);
+            if (targetContent) {
+                targetContent.style.visibility = "visible";
+                $(targetContent).find(".deleteButton").click(function (e) {
+                    e.preventDefault();
+                    let usr_id = $(this).data("key");
+                    let problem_id = $(this).data("id");
+                    var delete_button = $(this);
+                    if (confirmDelete()) {
+                        $.ajax({
+                            url: "/delete_problem/" +usr_id+ "/" + problem_id,
+                            type: "DELETE",
+                            success: function (result) {
+                                delete_button.closest('tr').remove(); // 刪除整行<tr>
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    }
+                });
+            }
+
+            function confirmDelete() {
+                return confirm("您確定要刪除嗎？");
+            }
+
+            // 移除所有按鈕的 active 類
+            var allButtons = document.querySelectorAll('.box-button');
+            allButtons.forEach(function (button) {
+                button.classList.remove('active');
+            });
+
+            // 為當前按鈕添加 active 類
+            var activeButton = document.getElementById(buttonId);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+    </script>
+</body>
+
+</html>
